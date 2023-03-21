@@ -1,0 +1,20 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    username: root
+    password: asdfdg3245f2w_9e91843^asdfsadf
+    url: jdbc:mariadb://localhost:3306/mylabs
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    generate-ddl: true
+    properties:
+      hibernate:
+        ddl-auto: update
+#        show-sql: true
+        dialect: org.hibernate.dialect.MariaDB103Dialect
+    show-sql: true
