@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     username: root
-    password: asdfdg3245f2w_9e91843^asdfsadf
+    password: rootroot
     url: jdbc:mariadb://localhost:3306/mylabs
     driver-class-name: org.mariadb.jdbc.Driver
 
@@ -15,6 +15,5 @@ spring:
     properties:
       hibernate:
         ddl-auto: update
-#        show-sql: true
         dialect: org.hibernate.dialect.MariaDB103Dialect
     show-sql: true

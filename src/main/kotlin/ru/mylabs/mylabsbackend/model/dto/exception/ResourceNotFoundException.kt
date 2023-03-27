@@ -3,8 +3,10 @@ package ru.mylabs.mylabsbackend.model.dto.exception
 import org.springframework.http.HttpStatus
 
 class ResourceNotFoundException(
-    message: String
+    resource: String
 ) : AbstractApiException(
     HttpStatus.NOT_FOUND,
-    message
-)
+    "$resource not found"
+) {
+    constructor() : this("Resource not found")
+}

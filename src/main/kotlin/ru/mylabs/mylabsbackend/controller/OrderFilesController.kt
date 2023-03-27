@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.util.FileCopyUtils
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import ru.mylabs.mylabsbackend.model.dto.ApiResponse
+import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
 import ru.mylabs.mylabsbackend.model.entity.TaskFile
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService

@@ -39,7 +39,7 @@ class TaskFileServiceImpl(
 
         if (filenameBd == null) {
             logger.error("TaskFile.taskPath in is null")
-            throw InternalServerError()
+            throw InternalServerErrorException()
         }
 
         if (filenameBd != filename) {
@@ -50,7 +50,7 @@ class TaskFileServiceImpl(
         val file = File(uploadsFolderPath.toString(), filename)
         if (!file.exists()) {
             logger.error("${file.absolutePath} not exist while database store it")
-            throw InternalServerError()
+            throw InternalServerErrorException()
         }
 
         return file
@@ -75,12 +75,11 @@ class TaskFileServiceImpl(
         }
 
         taskFileRepository.deleteById(fileId)
-
-        if (taskFile.filename == null) throw InternalServerError()
+        if (taskFile.filename == null) throw InternalServerErrorException()
 
         if (!deleteFileFromStorage(taskFile.filename!!))  {
             logger.error("${taskFile.filename} not exist while database store it")
-            throw InternalServerError()
+            throw InternalServerErrorException()
         }
     }
 

@@ -4,7 +4,7 @@ package ru.mylabs.mylabsbackend.service.orderService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadRequestException
-import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerError
+import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
 import ru.mylabs.mylabsbackend.model.entity.Lab
 import ru.mylabs.mylabsbackend.model.entity.Order
@@ -42,7 +42,7 @@ class OrderServiceImpl(
         for (task in taskFileList) {
             if (task.filename == null) {
                 logger.error("task #${task.id} has null filename")
-                throw InternalServerError()
+                throw InternalServerErrorException()
             }
             taskFileService.deleteFileFromStorage(task.filename!!)
         }
@@ -100,7 +100,7 @@ class OrderServiceImpl(
             }
             return labRepository.save(model)
         } else {
-            throw InternalServerError()
+            throw InternalServerErrorException()
         }
     }
 }

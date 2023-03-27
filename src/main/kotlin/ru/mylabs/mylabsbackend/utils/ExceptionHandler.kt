@@ -1,35 +1,46 @@
 package ru.mylabs.mylabsbackend.utils
 
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
-import ru.mylabs.mylabsbackend.model.dto.ApiResponse
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import ru.mylabs.mylabsbackend.model.dto.exception.AbstractApiException
-import ru.mylabs.mylabsbackend.model.dto.exception.FileIsTooBigException
+import ru.mylabs.mylabsbackend.model.dto.exception.ForbiddenException
+import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
+import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 
-@ControllerAdvice
-class ExceptionHandler {
-    private val logger = LoggerFactory.getLogger(ExceptionHandler::class.java)
+
+@RestControllerAdvice
+class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     @ExceptionHandler(value = [AbstractApiException::class])
-    protected fun handle(cause: AbstractApiException, request: WebRequest): ResponseEntity<ApiResponse> {
-        logger.info(cause.stackTraceToString())
+    protected fun handle(
+        cause: AbstractApiException,
+        request: WebRequest
+    ): ResponseEntity<ApiResponse> {
+//        logger.info(cause.toString())
         return cause.asResponse()
     }
 
-    @ExceptionHandler(value = [FileSizeLimitExceededException::class])
-    protected fun handle(cause: FileSizeLimitExceededException, request: WebRequest): ResponseEntity<ApiResponse> {
-        logger.info(cause.stackTraceToString())
-        return FileIsTooBigException().asResponse()
+    @ExceptionHandler(value = [AccessDeniedException::class])
+    protected fun handle(
+        cause: AccessDeniedException,
+        request: WebRequest
+    ): ResponseEntity<ApiResponse> {
+//        logger.info(cause.toString())
+        return ForbiddenException().asResponse()
     }
 
-//    @ExceptionHandler(value = [Throwable::class])
-//    protected fun handle(cause: Throwable, request: WebRequest): ResponseEntity<ApiResponse> {
-//        logger.error(cause.stackTraceToString())
-//
-//        return InternalServerError().asResponse()
-//    }
+    @ExceptionHandler(value = [Throwable::class])
+    protected fun handle(
+        cause: Throwable,
+        request: WebRequest
+    ): ResponseEntity<ApiResponse> {
+        logger.error(cause.toString())
+        return InternalServerErrorException().asResponse()
+    }
 }
