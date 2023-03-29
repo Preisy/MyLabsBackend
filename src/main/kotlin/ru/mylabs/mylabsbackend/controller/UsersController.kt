@@ -29,7 +29,11 @@ class UsersController(
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/roles/{id}")
-    fun giveRole(@PathVariable id: Long) = userService.giveRole(id)
-
+    @PostMapping("/{id}/roles")
+    fun giveRole(@PathVariable id: Long, @RequestBody roleRequest: ChangeRoleRequest) =
+        userService.giveRole(id, roleRequest)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}/roles")
+    fun deleteRole(@PathVariable id: Long, @RequestBody roleRequest: ChangeRoleRequest) =
+        userService.deleteRole(id, roleRequest)
 }

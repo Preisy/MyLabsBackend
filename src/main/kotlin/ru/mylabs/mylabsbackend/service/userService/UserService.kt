@@ -11,5 +11,6 @@ import ru.mylabs.mylabsbackend.service.crudService.CrudService
 
 interface UserService : CrudService<UserRequest, User, Long>, UserDetailsService {
     fun findByLogin(login: String): User
-    fun giveRole(id: Long): User
+    fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User
+    fun deleteRole(id: Long, roleRequest: ChangeRoleRequest): User
 }
