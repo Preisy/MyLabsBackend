@@ -6,24 +6,21 @@ server:
 spring:
   datasource:
     username: root
-    password: asdfdg3245f2w_9e91843^asdfsadf
+    password: rootroot
     url: jdbc:mariadb://localhost:3306/mylabs
     driver-class-name: org.mariadb.jdbc.Driver
   mail:
-    host: smtp.mail.ru
+    protocol: smtp
+    username: studyforcovid19@gmail.com
+    password: xmiyorvuysvmlvtf
+    host: smtp.gmail.com
     port: 587
     properties:
       mail:
         smtp:
+          auth: true
           starttls:
             enable: true
-            required: true
-            connection-timeout: 5000
-            timeout: 5000
-            write-timeout: 5000
-        auth: true
-        username: example@mail.ru
-        password: examplepassword
 
   jpa:
     generate-ddl: true

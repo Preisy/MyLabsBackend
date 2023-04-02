@@ -40,7 +40,7 @@ class SecurityConfig(
                 .disable()
             }
             .authorizeHttpRequests { auth -> auth
-                .requestMatchers("/health", "/login", "/signup").permitAll()
+                .requestMatchers("/health", "/login", "/signup", "/signup/confirm").permitAll()
                 .requestMatchers("/users").authenticated()
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
