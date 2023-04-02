@@ -46,6 +46,7 @@ dependencies {
 	compileOnly("commons-io:commons-io:2.11.0")
 	compileOnly("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
 	compileOnly("javax.servlet:javax.servlet-api:4.0.1")
+	implementation("org.springframework.boot:spring-boot-starter-mail:3.0.4")
 }
 
 tasks.withType<KotlinCompile> {

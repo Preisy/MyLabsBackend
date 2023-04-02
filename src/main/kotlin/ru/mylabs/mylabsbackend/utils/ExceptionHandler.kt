@@ -35,12 +35,4 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         return ForbiddenException().asResponse()
     }
 
-    @ExceptionHandler(value = [Throwable::class])
-    protected fun handle(
-        cause: Throwable,
-        request: WebRequest
-    ): ResponseEntity<ApiResponse> {
-        logger.error(cause.toString())
-        return InternalServerErrorException().asResponse()
-    }
 }

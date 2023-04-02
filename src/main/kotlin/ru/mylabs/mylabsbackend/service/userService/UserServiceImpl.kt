@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadCredentialsException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
+import ru.mylabs.mylabsbackend.model.dto.exception.UserAlreadyHasRole
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
 import ru.mylabs.mylabsbackend.model.entity.User
@@ -24,6 +25,7 @@ class UserServiceImpl(
         model.uPassword = passwordEncoder.encode(request.password)
         return repository.save(model)
     }
+
     override fun findByLogin(login: String): User = repository.findByEmail(login).orElseThrow {
         ResourceNotFoundException("User not found")
     }
@@ -34,17 +36,16 @@ class UserServiceImpl(
 
     override fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User {
         val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User not found") }
-        user.roles.add(UserRole(roleRequest.name))
+        user.takeIf{!it.containsRole(it, roleRequest)}?.roles?.add(UserRole(roleRequest.name))
         return repository.save(user)
     }
 
     override fun deleteRole(id: Long, roleRequest: ChangeRoleRequest): User {
         val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User not found") }
-        if (roleRequest.name != UserRoleType.USER) {
-            user.roles.remove(UserRole(roleRequest.name))
-            //user.roles.clear()
-        }
-       else throw BadCredentialsException()
+       if (roleRequest.name != UserRoleType.USER)
+            user.removeRole(user, roleRequest)
+        else throw BadCredentialsException()
         return repository.save(user)
     }
+
 }

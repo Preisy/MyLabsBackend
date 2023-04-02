@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import ru.mylabs.mylabsbackend.configuration.RoleHierarchy
+import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 
 
 @Entity
@@ -27,7 +28,10 @@ class User(
     @JsonIdentityReference(alwaysAsId = true)
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER))
+    var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER)),
+
+    //var isEnabled: Boolean
+
 ) : AbstractEntity(), UserDetails {
 
     @JsonIgnore
@@ -70,4 +74,19 @@ class User(
 
     @JsonIgnore
     override fun isEnabled() = true
+     fun containsRole(user: User, roleRequest: ChangeRoleRequest): Boolean {
+        var userHasRole = false
+        user.roles.forEach {
+            if (it.name == roleRequest.name)
+                userHasRole = true
+        }
+        return userHasRole
+    }
+    fun removeRole(user: User, roleRequest: ChangeRoleRequest): User {
+        user.roles.forEach {
+            if (it.name == roleRequest.name)
+                user.roles.remove(it)
+        }
+        return user
+    }
 }

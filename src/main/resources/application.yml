@@ -9,6 +9,21 @@ spring:
     password: rootroot
     url: jdbc:mariadb://localhost:3306/mylabs
     driver-class-name: org.mariadb.jdbc.Driver
+  mail:
+    host: smtp.mail.ru
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+            connection-timeout: 5000
+            timeout: 5000
+            write-timeout: 5000
+        auth: true
+        username: example@mail.ru
+        password: examplepassword
 
   jpa:
     generate-ddl: true

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
+import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.service.userService.UserService
