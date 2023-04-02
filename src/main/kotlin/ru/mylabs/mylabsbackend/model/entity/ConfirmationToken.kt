@@ -1,7 +1,6 @@
+package ru.mylabs.mylabsbackend.model.entity
+
 import jakarta.persistence.*
-import ru.mylabs.mylabsbackend.model.entity.AbstractEntity
-import ru.mylabs.mylabsbackend.model.entity.User
-import kotlin.random.Random
 
 
 @Entity

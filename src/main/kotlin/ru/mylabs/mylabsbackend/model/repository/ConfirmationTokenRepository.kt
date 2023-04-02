@@ -1,7 +1,7 @@
 package ru.mylabs.mylabsbackend.model.repository
 
 
-import ConfirmationToken
+import ru.mylabs.mylabsbackend.model.entity.ConfirmationToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
