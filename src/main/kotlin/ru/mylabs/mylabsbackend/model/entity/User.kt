@@ -7,6 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import ru.mylabs.mylabsbackend.configuration.RoleHierarchy
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
 
 @Entity

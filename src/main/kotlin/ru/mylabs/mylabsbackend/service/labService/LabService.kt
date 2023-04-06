@@ -1,7 +1,7 @@
 package ru.mylabs.mylabsbackend.service.labService
 
-import ru.mylabs.mylabsbackend.model.entity.Lab
-import ru.mylabs.mylabsbackend.model.entity.LabsQuantity
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest
 import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest
 

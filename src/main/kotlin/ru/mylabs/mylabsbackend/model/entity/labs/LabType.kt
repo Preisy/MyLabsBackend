@@ -1,4 +1,4 @@
-package ru.mylabs.mylabsbackend.model.entity
+package ru.mylabs.mylabsbackend.model.entity.labs
 
 enum class LabType {
     C,

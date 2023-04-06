@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
-import ru.mylabs.mylabsbackend.model.entity.Lab
-import ru.mylabs.mylabsbackend.model.entity.LabsQuantity
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 import ru.mylabs.mylabsbackend.service.labService.LabService
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest
 import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest

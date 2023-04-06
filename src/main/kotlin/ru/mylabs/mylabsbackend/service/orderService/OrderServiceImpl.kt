@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadRequestException
 import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
-import ru.mylabs.mylabsbackend.model.entity.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
 import ru.mylabs.mylabsbackend.model.entity.Order
 import ru.mylabs.mylabsbackend.model.repository.LabRepository
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository

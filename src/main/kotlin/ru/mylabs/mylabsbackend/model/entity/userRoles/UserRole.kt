@@ -1,4 +1,4 @@
-package ru.mylabs.mylabsbackend.model.entity
+package ru.mylabs.mylabsbackend.model.entity.userRoles
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

@@ -1,8 +1,7 @@
-package ru.mylabs.mylabsbackend.model.entity
+package ru.mylabs.mylabsbackend.model.entity.userRoles
 
 enum class UserRoleType {
     ADMIN,
-    MODERATOR,
     USER;
 
     override fun toString(): String {

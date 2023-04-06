@@ -16,7 +16,7 @@ import ru.mylabs.mylabsbackend.model.dto.exception.BadCredentialsException
 import ru.mylabs.mylabsbackend.model.dto.request.LoginRequest
 import ru.mylabs.mylabsbackend.model.dto.response.TokenResponse
 import ru.mylabs.mylabsbackend.model.entity.User
-import ru.mylabs.mylabsbackend.model.entity.UserRoleType
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 import ru.mylabs.mylabsbackend.utils.JwtTokenUtil
 import java.util.*
 

@@ -3,8 +3,8 @@ package ru.mylabs.mylabsbackend.service.labService
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
-import ru.mylabs.mylabsbackend.model.entity.Lab
-import ru.mylabs.mylabsbackend.model.entity.LabsQuantity
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 import ru.mylabs.mylabsbackend.model.repository.LabQuantityRepository
 import ru.mylabs.mylabsbackend.model.repository.LabRepository
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest

@@ -1,7 +1,7 @@
 package ru.mylabs.mylabsbackend.model.dto.request
 
-import ru.mylabs.mylabsbackend.model.entity.UserRole
-import ru.mylabs.mylabsbackend.model.entity.UserRoleType
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
 
 class ChangeRoleRequest (

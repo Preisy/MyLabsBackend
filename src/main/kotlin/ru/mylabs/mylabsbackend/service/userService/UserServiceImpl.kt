@@ -5,12 +5,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadCredentialsException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
-import ru.mylabs.mylabsbackend.model.dto.exception.UserAlreadyHasRole
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
 import ru.mylabs.mylabsbackend.model.entity.User
-import ru.mylabs.mylabsbackend.model.entity.UserRole
-import ru.mylabs.mylabsbackend.model.entity.UserRoleType
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
+import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
 
