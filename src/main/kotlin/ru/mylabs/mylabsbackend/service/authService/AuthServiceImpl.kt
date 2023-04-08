@@ -27,7 +27,8 @@ class AuthServiceImpl(
     private val jwtTokenUtil: JwtTokenUtil,
     private val passwordEncoder: PasswordEncoder,
     private val confirmationTokenRepository: ConfirmationTokenRepository,
-    private val confirmationMailSender: ConfirmationMailSender
+    private val javaMailSender: JavaMailSender
+
 ) : AuthService {
     override fun signUp(signUpRequest: SignUpRequest): ConfirmEmailMessage {
         if (userRepository.existsByEmail(signUpRequest.email)) throw EmailAlreadyTakenException()
@@ -35,6 +36,7 @@ class AuthServiceImpl(
         val user = userRepository.save(signUpRequest.asModel())
         val confirmationToken = ConfirmationToken(UUID.randomUUID().toString(), user)
         confirmationTokenRepository.save(confirmationToken)
+        val confirmationMailSender = ConfirmationMailSender(javaMailSender)
         confirmationMailSender.sendEmail(confirmationToken, user)
         return ConfirmEmailMessage()
     }

@@ -17,7 +17,7 @@ class ConfirmationToken(
     val user: User
 ) : AbstractEntity() {
     @Column
-     val expiryDate: Date = calculateExpiryDate(2)
+    val expiryDate: Date = calculateExpiryDate(2)
      fun calculateExpiryDate(expiryTimeInMinutes: Int): Date {
         val cal = Calendar.getInstance()
         cal.time = Date(cal.time.time)
