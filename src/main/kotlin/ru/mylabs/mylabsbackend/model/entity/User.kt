@@ -7,6 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import ru.mylabs.mylabsbackend.configuration.RoleHierarchy
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
@@ -30,11 +32,10 @@ class User(
     @JsonIdentityReference(alwaysAsId = true)
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER)),
-
-    //var isEnabled: Boolean
+    var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER))
 
 ) : AbstractEntity(), UserDetails {
+
 
     @JsonIgnore
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
