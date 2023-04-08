@@ -48,6 +48,11 @@ dependencies {
 	compileOnly("javax.servlet:javax.servlet-api:4.0.1")
 	implementation("org.springframework.boot:spring-boot-starter-mail:3.0.4")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf:3.0.4")
+
+
+	implementation("javax.xml.bind:jaxb-api:2.3.0")
+	implementation("com.sun.xml.bind:jaxb-core:2.3.0")
+	implementation("com.sun.xml.bind:jaxb-impl:2.3.0")
 }
 
 tasks.withType<KotlinCompile> {

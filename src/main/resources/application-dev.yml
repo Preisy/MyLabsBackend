@@ -1,7 +1,7 @@
 server:
-  hostname: mylabs.ru
+  port: 8080
   servlet:
-    context-path: /api/dev
+    context-path: /api
 
 spring:
   datasource:
