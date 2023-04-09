@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.util.FileCopyUtils
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
+import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.model.entity.TaskFile
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import java.io.BufferedInputStream
@@ -29,6 +29,7 @@ class OrderFilesController(
     fun uploadFile(@PathVariable orderId: Long, @RequestParam("file") file: MultipartFile): TaskFile {
         return taskFileService.uploadFile(orderId, file)
     }
+
     @DeleteMapping("/{fileId}")
     fun deleteFile(@PathVariable orderId: Long, @PathVariable fileId: Long): ResponseEntity<ApiResponse> {
         taskFileService.deleteFile(orderId, fileId)
@@ -36,7 +37,7 @@ class OrderFilesController(
     }
 
     @GetMapping("/{filename:.+}")
-    fun getFile(response: HttpServletResponse,@PathVariable orderId: Long, @PathVariable filename: String) {
+    fun getFile(response: HttpServletResponse, @PathVariable orderId: Long, @PathVariable filename: String) {
         val file = taskFileService.findFileById(orderId, filename)
         val mimeType = URLConnection.guessContentTypeFromName(file.name)
         response.contentType = mimeType

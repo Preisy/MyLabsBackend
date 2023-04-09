@@ -3,16 +3,16 @@ package ru.mylabs.mylabsbackend.model.dto
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import ru.mylabs.mylabsbackend.model.entity.ConfirmationToken
-import ru.mylabs.mylabsbackend.model.entity.User
 
-class ConfirmationMailSender(private val javaMailSender: JavaMailSender): SimpleMailMessage() {
+class ConfirmationMailSender(private val javaMailSender: JavaMailSender) : SimpleMailMessage() {
 
-     fun sendEmail(confirmationToken: ConfirmationToken, user: User) {
+    fun sendEmail(confirmationToken: ConfirmationToken) {
         val mailMessage = SimpleMailMessage()
-        mailMessage.setTo(user.email)
+        mailMessage.setTo(confirmationToken.email)
         mailMessage.subject = "Complete Registration!"
         mailMessage.from = "MyLabsProgramming@gmail.com"
-        mailMessage.text = "You know what to do: ${confirmationToken.confirmationToken}"
+        mailMessage.text =
+            "Enter the following code: ${confirmationToken.confirmationToken} or just click on the link: https://mylabs.ru/confirm?email=${confirmationToken.email}"
         javaMailSender.send(mailMessage)
     }
 }

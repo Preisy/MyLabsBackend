@@ -23,6 +23,7 @@ class UserLabController {
     ): Iterable<UserLab> {
         return userLabService.findByUserId(offset, limit)
     }
+
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): UserLab {
         return userLabService.findById(id)
@@ -33,6 +34,7 @@ class UserLabController {
     fun post(@RequestBody userLabRequest: UserLabRequest): UserLab {
         return userLabService.create(userLabRequest)
     }
+
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody userLabRequest: UserLabRequest): UserLab {
         return userLabService.update(id, userLabRequest)

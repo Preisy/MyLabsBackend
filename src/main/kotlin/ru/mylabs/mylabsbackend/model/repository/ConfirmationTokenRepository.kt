@@ -1,9 +1,9 @@
 package ru.mylabs.mylabsbackend.model.repository
 
 
-import ru.mylabs.mylabsbackend.model.entity.ConfirmationToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import ru.mylabs.mylabsbackend.model.entity.ConfirmationToken
 
 @Repository
 interface ConfirmationTokenRepository : CrudRepository<ConfirmationToken, Long> {

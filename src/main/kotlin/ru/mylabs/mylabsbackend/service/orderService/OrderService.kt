@@ -1,9 +1,9 @@
 package ru.mylabs.mylabsbackend.service.orderService
 
-import ru.mylabs.mylabsbackend.model.entity.labs.Lab
-import ru.mylabs.mylabsbackend.model.entity.Order
 import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
+import ru.mylabs.mylabsbackend.model.entity.Order
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
 
 interface OrderService {
     fun create(orderRequest: OrderRequest): Order

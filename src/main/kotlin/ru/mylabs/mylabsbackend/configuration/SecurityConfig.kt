@@ -36,23 +36,35 @@ class SecurityConfig(
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         val authenticationManager = authManager(http)
         http
-            .csrf { customizer -> customizer
-                .disable()
+            .csrf { customizer ->
+                customizer
+                    .disable()
             }
-            .authorizeHttpRequests { auth -> auth
-                .requestMatchers("/health", "/login", "/signup", "/signup/confirm").permitAll()
-                .requestMatchers("/users").authenticated()
-                .requestMatchers("/admin").hasRole("ADMIN")
-                .anyRequest().authenticated()
+            .authorizeHttpRequests { auth ->
+                auth
+                    .requestMatchers(
+                        "/health",
+                        "/login",
+                        "/signup",
+                        "/signup/confirm",
+                        "/labs",
+                        "/reviews",
+                        "/labs/quantity"
+                    ).permitAll()
+                    .requestMatchers("/users").authenticated()
+                    .requestMatchers("/admin").hasRole("ADMIN")
+                    .anyRequest().authenticated()
 
             }
-            .exceptionHandling { ex -> ex
-                .authenticationEntryPoint(UnauthorizedException())
-                .accessDeniedHandler(ForbiddenException())
+            .exceptionHandling { ex ->
+                ex
+                    .authenticationEntryPoint(UnauthorizedException())
+                    .accessDeniedHandler(ForbiddenException())
             }
             .authenticationManager(authenticationManager)
-            .sessionManagement { session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionManagement { session ->
+                session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .addFilter(JwtAuthenticationFilter(jwtToken, authenticationManager))
             .addFilter(JwtAuthorizationFilter(jwtToken, userDetailsService, authenticationManager))

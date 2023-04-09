@@ -36,9 +36,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
 
+	implementation("org.reactivestreams:reactive-streams:1.0.4")
 
-
-//    implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
+//    implementation("jakarta.xml.bind:jakarta.x	ml.bind-api:2.3.3")
 //    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	implementation("org.springframework.boot:spring-boot-configuration-processor")

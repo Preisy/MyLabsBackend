@@ -4,8 +4,8 @@ import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
 
-class ChangeRoleRequest (
+class ChangeRoleRequest(
     val name: UserRoleType
 ) {
-     fun asModel() = UserRole(name)
+    fun asModel() = UserRole(name)
 }

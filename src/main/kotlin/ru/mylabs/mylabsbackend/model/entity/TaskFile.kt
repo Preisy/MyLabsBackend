@@ -7,7 +7,7 @@ import jakarta.persistence.ManyToOne
 
 @Entity
 @JsonIgnoreProperties("order")
-class TaskFile (
+class TaskFile(
     @ManyToOne
     val order: Order,
     @Column(nullable = true, length = 255)

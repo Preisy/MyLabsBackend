@@ -14,6 +14,7 @@ class MeController(
 ) {
     @GetMapping
     fun getMeInfo() = meService.getMeInfo()
+
     @PutMapping
     fun putMeInfo(userRequest: UserRequest) = meService.putMeInfo(userRequest)
 }

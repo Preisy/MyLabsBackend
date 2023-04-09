@@ -16,12 +16,16 @@ class AuthController(
     private val authService: AuthService
 ) {
     @PostMapping("/confirm")
-    fun confirmSignUp(@RequestBody signUpConfirmRequest: SignUpConfirmRequest, res: HttpServletResponse): TokenResponse {
+    fun confirmSignUp(
+        @RequestBody signUpConfirmRequest: SignUpConfirmRequest,
+        res: HttpServletResponse
+    ): TokenResponse {
         val token = authService.confirmSignUp(signUpConfirmRequest)
         res.addHeader("Authorization", token.token)
         res.addHeader("Access-Control-Expose-Headers", "Authorization")
         return token
     }
+
     @PostMapping
     fun signUp(@RequestBody signUpRequest: SignUpRequest) = authService.signUp(signUpRequest)
 
