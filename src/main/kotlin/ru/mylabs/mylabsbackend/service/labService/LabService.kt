@@ -1,9 +1,9 @@
 package ru.mylabs.mylabsbackend.service.labService
 
-import ru.mylabs.mylabsbackend.model.entity.labs.Lab
-import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest
 import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 
 interface LabService {
     fun create(labRequest: LabRequest): Lab

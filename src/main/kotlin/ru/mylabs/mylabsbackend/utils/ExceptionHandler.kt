@@ -9,7 +9,6 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import ru.mylabs.mylabsbackend.model.dto.exception.AbstractApiException
 import ru.mylabs.mylabsbackend.model.dto.exception.ForbiddenException
-import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 
 

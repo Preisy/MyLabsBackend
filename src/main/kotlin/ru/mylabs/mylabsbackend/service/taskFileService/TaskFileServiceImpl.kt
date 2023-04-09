@@ -3,9 +3,9 @@ package ru.mylabs.mylabsbackend.service.taskFileService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import ru.mylabs.mylabsbackend.model.dto.exception.*
 import ru.mylabs.mylabsbackend.model.entity.Order
 import ru.mylabs.mylabsbackend.model.entity.TaskFile
-import ru.mylabs.mylabsbackend.model.dto.exception.*
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository
 import ru.mylabs.mylabsbackend.model.repository.TaskFileRepository
 import java.io.File
@@ -77,7 +77,7 @@ class TaskFileServiceImpl(
         taskFileRepository.deleteById(fileId)
         if (taskFile.filename == null) throw InternalServerErrorException()
 
-        if (!deleteFileFromStorage(taskFile.filename!!))  {
+        if (!deleteFileFromStorage(taskFile.filename!!)) {
             logger.error("${taskFile.filename} not exist while database store it")
             throw InternalServerErrorException()
         }

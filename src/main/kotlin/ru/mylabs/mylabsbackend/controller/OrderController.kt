@@ -1,12 +1,13 @@
 package ru.mylabs.mylabsbackend.controller
 
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
-import ru.mylabs.mylabsbackend.service.orderService.OrderService
 import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
+import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
+import ru.mylabs.mylabsbackend.service.orderService.OrderService
 
 @RestController
 @RequestMapping("/orders")
@@ -36,6 +37,7 @@ class OrderController(
         @RequestBody orderRequest: OrderRequest
     ) = orderService.patch(id, orderRequest)
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/status")
     fun setStatus(
         @PathVariable id: Long,

@@ -35,13 +35,13 @@ class UserServiceImpl(
 
     override fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User {
         val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User not found") }
-        user.takeIf{!it.containsRole(it, roleRequest)}?.roles?.add(UserRole(roleRequest.name))
+        user.takeIf { !it.containsRole(it, roleRequest) }?.roles?.add(UserRole(roleRequest.name))
         return repository.save(user)
     }
 
     override fun deleteRole(id: Long, roleRequest: ChangeRoleRequest): User {
         val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User not found") }
-       if (roleRequest.name != UserRoleType.USER)
+        if (roleRequest.name != UserRoleType.USER)
             user.removeRole(user, roleRequest)
         else throw BadCredentialsException()
         return repository.save(user)

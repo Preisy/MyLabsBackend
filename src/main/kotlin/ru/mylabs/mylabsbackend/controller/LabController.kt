@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
-import ru.mylabs.mylabsbackend.model.entity.labs.Lab
-import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
-import ru.mylabs.mylabsbackend.service.labService.LabService
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest
 import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
+import ru.mylabs.mylabsbackend.service.labService.LabService
 
 @RestController
 @RequestMapping("/labs")
@@ -26,16 +26,19 @@ class LabController {
     ): Iterable<Lab> {
         return labService.findAll(offset, limit)
     }
+
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): Lab {
         return labService.findById(id)
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     fun post(@RequestBody labRequest: LabRequest): Lab {
         return labService.create(labRequest)
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody labRequest: LabRequest): Lab {
@@ -52,11 +55,12 @@ class LabController {
 
     @GetMapping("/quantity")
     fun getQuantity(): LabsQuantity {
-        return labService.getQuantity();
+        return labService.getQuantity()
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/quantity")
     fun setQuantity(@RequestBody labsQuantityRequest: LabsQuantityRequest): LabsQuantity {
-        return labService.setQuantity(labsQuantityRequest);
+        return labService.setQuantity(labsQuantityRequest)
     }
 }

@@ -15,6 +15,7 @@ import ru.mylabs.mylabsbackend.service.userService.UserService
 class UsersController(
     private val userService: UserService
 ) {
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAll() = userService.findAll()
 
@@ -33,6 +34,7 @@ class UsersController(
     @PostMapping("/{id}/roles")
     fun giveRole(@PathVariable id: Long, @RequestBody roleRequest: ChangeRoleRequest) =
         userService.giveRole(id, roleRequest)
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}/roles")
     fun deleteRole(@PathVariable id: Long, @RequestBody roleRequest: ChangeRoleRequest) =

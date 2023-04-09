@@ -1,12 +1,11 @@
 package ru.mylabs.mylabsbackend.service.userLabService
 
-import org.apache.catalina.User
-import ru.mylabs.mylabsbackend.model.dto.request.UserLabRequest
-import ru.mylabs.mylabsbackend.model.repository.UserLabRepository
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
+import ru.mylabs.mylabsbackend.model.dto.request.UserLabRequest
+import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
+import ru.mylabs.mylabsbackend.model.repository.UserLabRepository
 import ru.mylabs.mylabsbackend.service.meService.MeService
 
 
@@ -32,7 +31,7 @@ class UserLabServiceImpl(
     override fun findById(id: Long): UserLab {
         val user = meService.getMeInfo()
         val res = userLabRepository.findById(id).orElseThrow { ResourceNotFoundException("Lab not found") }
-        if (res.user.id!=user.id) throw  ResourceNotFoundException("Lab not found")
+        if (res.user.id != user.id) throw ResourceNotFoundException("Lab not found")
         return res
     }
 

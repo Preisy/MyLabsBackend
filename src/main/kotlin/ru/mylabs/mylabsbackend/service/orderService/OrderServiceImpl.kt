@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadRequestException
 import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
-import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
+import ru.mylabs.mylabsbackend.model.dto.request.OrderStatus
+import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 import ru.mylabs.mylabsbackend.model.entity.Order
+import ru.mylabs.mylabsbackend.model.entity.labs.Lab
 import ru.mylabs.mylabsbackend.model.repository.LabRepository
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileServiceImpl
-import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
-import ru.mylabs.mylabsbackend.model.dto.request.OrderStatus
-import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 
 
 @Service

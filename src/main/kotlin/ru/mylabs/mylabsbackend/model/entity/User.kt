@@ -7,8 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import ru.mylabs.mylabsbackend.configuration.RoleHierarchy
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
-import ru.mylabs.mylabsbackend.model.entity.labs.Lab
-import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
@@ -77,7 +75,7 @@ class User(
 
     @JsonIgnore
     override fun isEnabled() = true
-     fun containsRole(user: User, roleRequest: ChangeRoleRequest): Boolean {
+    fun containsRole(user: User, roleRequest: ChangeRoleRequest): Boolean {
         var userHasRole = false
         user.roles.forEach {
             if (it.name == roleRequest.name)
@@ -85,6 +83,7 @@ class User(
         }
         return userHasRole
     }
+
     fun removeRole(user: User, roleRequest: ChangeRoleRequest): User {
         user.roles.forEach {
             if (it.name == roleRequest.name)

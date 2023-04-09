@@ -1,6 +1,5 @@
 package ru.mylabs.mylabsbackend.model.dto.request
 
-import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.model.entity.labs.LabType
 import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 

@@ -7,7 +7,7 @@ import ru.mylabs.mylabsbackend.model.dto.exception.UnauthorizedException
 import java.util.*
 
 @Component
-    class JwtTokenUtil {
+class JwtTokenUtil {
     private val secret = "YOUR_SECRET"
     private val expiration = 6000000
 
