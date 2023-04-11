@@ -13,12 +13,29 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import ru.mylabs.mylabsbackend.utils.JwtTokenUtil
 import java.io.IOException
 
-
 class JwtAuthorizationFilter(
     private val jwtTokenUtil: JwtTokenUtil,
     private val service: UserDetailsService,
-    authManager: AuthenticationManager,
+    authManager: AuthenticationManager
 ) : BasicAuthenticationFilter(authManager) {
+
+
+    private fun isExcludedUrl(req: HttpServletRequest): Boolean {
+
+        val excludedUrls =
+            listOf(
+                "/health",
+                "/login",
+                "/signup",
+                "/signup/confirm",
+                "/labs",
+                "/reviews",
+                "/labs/quantity",
+                "/password/forget",
+                "/password/reset"
+            )
+        return excludedUrls.any { it == req.servletPath }
+    }
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(
@@ -27,7 +44,7 @@ class JwtAuthorizationFilter(
         chain: FilterChain
     ) {
         val header = req.getHeader(AUTHORIZATION)
-        if (header == null || !header.startsWith("Bearer ")) {
+        if (header == null || !header.startsWith("Bearer ") || isExcludedUrl(req)) {
             chain.doFilter(req, res)
             return
         }

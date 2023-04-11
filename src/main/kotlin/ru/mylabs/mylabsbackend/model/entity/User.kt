@@ -35,6 +35,7 @@ class User(
 ) : AbstractEntity(), UserDetails {
 
 
+
     @JsonIgnore
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val roleHierarchy = RoleHierarchy.hierarchyList

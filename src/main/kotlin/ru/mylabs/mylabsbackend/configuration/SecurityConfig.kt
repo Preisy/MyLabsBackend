@@ -1,5 +1,6 @@
 package ru.mylabs.mylabsbackend.configuration
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -22,6 +23,7 @@ class SecurityConfig(
     private val userDetailsService: UserDetailsService,
 ) {
     private val jwtToken = JwtTokenUtil()
+
 
     private fun authManager(http: HttpSecurity): AuthenticationManager {
         val authenticationManagerBuilder = http.getSharedObject(
@@ -49,9 +51,11 @@ class SecurityConfig(
                         "/signup/confirm",
                         "/labs",
                         "/reviews",
-                        "/labs/quantity"
+                        "/labs/quantity",
+                        "/password/forget",
+                        "/password/reset"
                     ).permitAll()
-                    .requestMatchers("/users").authenticated()
+                    .requestMatchers("/users").hasRole("ADMIN")
                     .requestMatchers("/admin").hasRole("ADMIN")
                     .anyRequest().authenticated()
 

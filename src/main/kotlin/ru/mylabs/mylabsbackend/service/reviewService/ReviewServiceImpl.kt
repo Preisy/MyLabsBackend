@@ -27,13 +27,11 @@ class ReviewServiceImpl : ReviewService {
         val userInfo = getUserInfo(builder.toString())
         var map: MutableMap<Long?, UserResponse> = mutableMapOf<Long?, UserResponse>()
 
-        if (userInfo != null) {
-            userInfo.response.forEach {
-                map.put(it.id, it)
-            }
+        userInfo?.response?.forEach {
+            map[it.id] = it
         }
         res.response.items.forEach {
-            it.userUrl = "https://vk.com/id${it.fromId}"
+            it.commentUrl = "https://vk.com/id270022066?w=wall270022066_765_r${it.id}"
             val userProps = map.getValue(it.fromId)
             it.name = userProps.name
             it.surname = userProps.surname
@@ -46,7 +44,6 @@ class ReviewServiceImpl : ReviewService {
         val url = "$baseUrl/users.get?user_ids=$ids&fields=photo_200&access_token=$token&v=$version"
         val restTemplate = RestTemplate()
         val str = restTemplate.getForObject(url, String::class.java)
-        println(str)
         return ObjectMapper().readValue(str, UserInfoResponse::class.java)
     }
 }
