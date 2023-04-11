@@ -1,13 +1,13 @@
 server:
-  hostname: mylabs.ru
+  port: 8080
   servlet:
-    context-path: /api/dev
+    context-path: /api
 
 spring:
   datasource:
     username: root
     password: rootroot
-    url: jdbc:mariadb://185.182.111.172:3306/mylabs
+    url: jdbc:mariadb://185.182.111.172:3306/mylabs_dev
     driver-class-name: org.mariadb.jdbc.Driver
   mail:
     protocol: smtp
