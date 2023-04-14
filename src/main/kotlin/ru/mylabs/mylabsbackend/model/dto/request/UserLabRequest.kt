@@ -5,10 +5,8 @@ import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 
 class UserLabRequest(
     val title: String,
-    val duration: Int,
     val price: Int,
-    val type: LabType,
-    val priority: Int
+    val type: LabType
 ) {
-    fun asModel() = UserLab(title, duration, price, type, priority)
+    fun asModel() = UserLab(title, price, type)
 }

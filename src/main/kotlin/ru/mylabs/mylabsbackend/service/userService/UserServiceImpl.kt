@@ -8,19 +8,24 @@ import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.ResetPasswordRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
+import ru.mylabs.mylabsbackend.model.entity.Property
 import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
+import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
 import java.util.*
 
 @Service
 class UserServiceImpl(
-    override val repository: UserRepository, private val passwordEncoder: BCryptPasswordEncoder
+    override val repository: UserRepository,
+    private val passwordEncoder: BCryptPasswordEncoder,
+    private val propertiesService: PropertiesService
 ) : UserService, CrudServiceImpl<UserRequest, User, Long, UserRepository>(
     User::class.simpleName
 ) {
+    override fun findById(id: Long): User = repository.findById(id).orElseThrow{ResourceNotFoundException("User not found")}
     override fun create(request: UserRequest): User {
         val model = request.asModel()
         model.uPassword = passwordEncoder.encode(request.password)
@@ -50,17 +55,20 @@ class UserServiceImpl(
         return repository.save(user)
     }
 
-   override fun update(resetPasswordRequest: ResetPasswordRequest): User {
-       resetPasswordRequest.newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword)
-       var user = convertToNonOptional(repository.findByEmail(resetPasswordRequest.email))
-       user.uPassword = resetPasswordRequest.newPassword
-       return repository.save(user)
+    private fun findByEmail(email: String) = repository.findByEmail(email).orElseThrow{ResourceNotFoundException("User not found")}
+
+    override fun update(resetPasswordRequest: ResetPasswordRequest): User {
+        resetPasswordRequest.newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword)
+        var user = findByEmail(resetPasswordRequest.email)
+        user.uPassword = resetPasswordRequest.newPassword
+        return repository.save(user)
     }
 
-    override fun convertToNonOptional(user: Optional<User>): User {
-        return user.toNullable() ?: throw ResourceNotFoundException()
-    }
 
-    fun <T : Any> Optional<T>.toNullable(): T? = this.orElse(null)
+    override fun creditPercent(labPrice: Int, user: User): User {
+        val percent = propertiesService.getPercent().property.toFloat()
+        user.balance += (percent/100)*labPrice
+        return repository.save(user)
+    }
 
 }

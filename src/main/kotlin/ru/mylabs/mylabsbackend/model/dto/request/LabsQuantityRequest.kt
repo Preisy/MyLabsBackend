@@ -1,9 +1,9 @@
 package ru.mylabs.mylabsbackend.model.dto.request
 
-import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
+import ru.mylabs.mylabsbackend.model.entity.Property
 
 class LabsQuantityRequest(
-    val quantity: Long
+    val quantity: String
 ) {
-    fun asModel() = LabsQuantity(quantity)
+    fun asModel() = Property("labs_quantity", quantity)
 }

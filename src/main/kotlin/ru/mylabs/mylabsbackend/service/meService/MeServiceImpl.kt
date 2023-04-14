@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
+import ru.mylabs.mylabsbackend.model.dto.request.MeRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
 import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
@@ -21,15 +22,10 @@ class MeServiceImpl(
         return user
     }
 
-    override fun putMeInfo(userRequest: UserRequest): User {
-        val auth: Authentication = SecurityContextHolder.getContext().authentication
-        val user = repository.findByEmail(auth.name).orElseThrow {
-            ResourceNotFoundException("User not found")
-        }
-        user.uname = userRequest.name
-        user.email = userRequest.email
-        user.uPassword = userRequest.password
-        user.contact = user.contact
+    override fun putMeInfo(meRequest: MeRequest): User {
+        val user = getMeInfo()
+        user.uname = meRequest.name
+        user.contact = meRequest.contact
         return repository.save(user)
     }
 }

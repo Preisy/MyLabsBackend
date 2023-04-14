@@ -11,29 +11,34 @@ import ru.mylabs.mylabsbackend.model.dto.request.OrderStatus
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 import ru.mylabs.mylabsbackend.model.entity.Order
 import ru.mylabs.mylabsbackend.model.entity.labs.Lab
+import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.model.repository.LabRepository
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository
+import ru.mylabs.mylabsbackend.model.repository.UserLabRepository
+import ru.mylabs.mylabsbackend.model.repository.UserRepository
+import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileServiceImpl
+import ru.mylabs.mylabsbackend.service.userService.UserService
 
 
 @Service
 class OrderServiceImpl(
     private val orderRepository: OrderRepository,
-    private val labRepository: LabRepository,
-    private val taskFileService: TaskFileService
+    private val userLabRepository: UserLabRepository,
+    private val taskFileService: TaskFileService,
+    private val userService: UserService,
+    private val meService: MeService,
 ) : OrderService {
     private val logger = LoggerFactory.getLogger(TaskFileServiceImpl::class.java)
     private fun findById(id: Long): Order {
-        return orderRepository.findById(id).orElseThrow { ResourceNotFoundException("Order not found") }
+        return orderRepository.findById(id).orElseThrow { ResourceNotFoundException("Order") }
     }
 
     override fun create(orderRequest: OrderRequest): Order {
-        try {
-            return orderRepository.save(orderRequest.asModel())
-        } catch (e: NullPointerException) {
-            throw BadRequestException()
-        }
+        val model = orderRequest.asModel()
+        model.user = meService.getMeInfo()
+        return orderRepository.save(model)
     }
 
     override fun delete(id: Long) {
@@ -66,20 +71,16 @@ class OrderServiceImpl(
             throw BadRequestException()
         }
         return findById(id).apply {
-            username = order.username
-            contacts = order.contacts
             deadline = order.deadline
             taskText = order.taskText
             executor = order.executor
-
+            type = order.type
             orderRepository.save(this)
         }
     }
 
     override fun patch(id: Long, orderRequest: OrderRequest): Order {
         return findById(id).apply {
-            if (orderRequest.username != null) username = orderRequest.username!!
-            if (orderRequest.contacts != null) contacts = orderRequest.contacts!!
             if (orderRequest.deadline != null) deadline = orderRequest.deadline!!
             if (orderRequest.taskText != null) taskText = orderRequest.taskText
             if (orderRequest.executor != null) executor = orderRequest.executor
@@ -88,7 +89,8 @@ class OrderServiceImpl(
         }
     }
 
-    override fun setOrderStatus(id: Long, orderStatusRequest: OrderStatusRequest): Lab {
+    override fun setOrderStatus(id: Long, orderStatusRequest: OrderStatusRequest): UserLab {
+
         if (orderStatusRequest.status == OrderStatus.Complete) {
             if (orderStatusRequest.metadata == null)
                 throw BadRequestException("Complete order status require Lab info metadata")
@@ -98,7 +100,12 @@ class OrderServiceImpl(
             } catch (e: NullPointerException) {
                 throw BadRequestException()
             }
-            return labRepository.save(model)
+            model.user = meService.getMeInfo()
+            if (model.user.invitedById!=null) {
+                val user = userService.findById(model.user.invitedById!!)
+                userService.creditPercent(model.price,user)
+            }
+            return userLabRepository.save(model)
         } else {
             throw InternalServerErrorException()
         }

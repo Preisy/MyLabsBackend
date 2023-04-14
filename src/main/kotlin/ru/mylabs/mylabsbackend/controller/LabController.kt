@@ -7,17 +7,19 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest
-import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
+import ru.mylabs.mylabsbackend.model.entity.Property
 import ru.mylabs.mylabsbackend.model.entity.labs.Lab
-import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 import ru.mylabs.mylabsbackend.service.labService.LabService
+import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
 
 @RestController
 @RequestMapping("/labs")
 class LabController {
     @Autowired
     private lateinit var labService: LabService
+    @Autowired
+    private lateinit var propertiesService: PropertiesService
 
     @GetMapping
     fun findAll(
@@ -51,16 +53,8 @@ class LabController {
         labService.delete(id)
         return DeletedMessage().asResponse()
     }
-
-
     @GetMapping("/quantity")
-    fun getQuantity(): LabsQuantity {
-        return labService.getQuantity()
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/quantity")
-    fun setQuantity(@RequestBody labsQuantityRequest: LabsQuantityRequest): LabsQuantity {
-        return labService.setQuantity(labsQuantityRequest)
+    fun getQuantity(): Property {
+        return propertiesService.getQuantity()
     }
 }

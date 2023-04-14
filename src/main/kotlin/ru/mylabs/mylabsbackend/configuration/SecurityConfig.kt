@@ -57,6 +57,7 @@ class SecurityConfig(
                     ).permitAll()
                     .requestMatchers("/users").hasRole("ADMIN")
                     .requestMatchers("/admin").hasRole("ADMIN")
+                    .requestMatchers("/properties").hasRole("ADMIN")
                     .anyRequest().authenticated()
 
             }

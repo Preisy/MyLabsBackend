@@ -21,6 +21,8 @@ class EmailConfirmationToken(
     var uPassword: String,
     @Column(length = 255, nullable = false)
     var contact: String,
+    @Column(length = 255, nullable = false)
+    var invitedById: Long? = null
 
 
     ) : AbstractEntity() {

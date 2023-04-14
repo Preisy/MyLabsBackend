@@ -1,5 +1,6 @@
 package ru.mylabs.mylabsbackend.service.authService
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -46,6 +47,9 @@ class AuthServiceImpl(
             signUpRequest.password,
             signUpRequest.contact
         )
+        if (signUpRequest.invitedById != null) {
+            emailConfirmationToken.invitedById = signUpRequest.invitedById
+        }
         emailConfirmationTokenRepository.save(emailConfirmationToken)
         val subject = "Complete Registration!"
         val text =
@@ -64,7 +68,12 @@ class AuthServiceImpl(
                 throw TokenExpiredException()
             }
             val token: String = jwtTokenUtil.generateToken(confToken.email)
-            val user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
+            var user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
+            if (confToken.invitedById != null) {
+                user.invitedById = confToken.invitedById
+                var userInvitedBy = userService.findById(user.invitedById!!)
+                userInvitedBy.invitedUsers?.add(user)
+            }
             userRepository.save(user)
             emailConfirmationTokenRepository.delete(confToken)
             return TokenResponse(token)

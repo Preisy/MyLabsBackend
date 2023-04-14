@@ -15,18 +15,12 @@ class UserLab(
     @Column(nullable = false, length = 255)
     var title: String,
 
-    @Column
-    var duration: Int,
 
     @Column
     var price: Int,
 
     @Column
-    var type: LabType,
-
-    @Column
-    @Value("0")
-    var priority: Int,
+    var type: LabType
 
     ) : AbstractEntity() {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")

@@ -37,10 +37,8 @@ class UserLabServiceImpl(
 
     override fun update(id: Long, userLabRequest: UserLabRequest) = findById(id).apply {
         title = userLabRequest.title
-        duration = userLabRequest.duration
         price = userLabRequest.price
         type = userLabRequest.type
-        priority = userLabRequest.priority
         userLabRepository.save(this)
     }
 

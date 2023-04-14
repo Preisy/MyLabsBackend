@@ -31,11 +31,15 @@ class User(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER))
-
 ) : AbstractEntity(), UserDetails {
+    @Column(length = 255, nullable = false)
+    var balance: Float = 0f
+    @Column(length = 255, nullable = true)
+    var invitedById: Long? = null
 
-
-
+    @Column(length = 255, nullable = true)
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    var invitedUsers: MutableList<User>? = null
     @JsonIgnore
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val roleHierarchy = RoleHierarchy.hierarchyList

@@ -14,6 +14,7 @@ import ru.mylabs.mylabsbackend.service.orderService.OrderService
 class OrderController(
     private val orderService: OrderService
 ) {
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAll(
         @RequestParam offset: Int?,
@@ -24,13 +25,13 @@ class OrderController(
     fun create(
         @RequestBody orderRequest: OrderRequest
     ) = orderService.create(orderRequest)
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: Long,
         @RequestBody orderRequest: OrderRequest
     ) = orderService.update(id, orderRequest)
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     fun patch(
         @PathVariable id: Long,
@@ -43,7 +44,7 @@ class OrderController(
         @PathVariable id: Long,
         @RequestBody orderStatusRequest: OrderStatusRequest
     ) = orderService.setOrderStatus(id, orderStatusRequest)
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<ApiResponse> {
         orderService.delete(id)

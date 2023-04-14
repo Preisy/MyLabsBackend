@@ -1,9 +1,7 @@
 package ru.mylabs.mylabsbackend.service.labService
 
 import ru.mylabs.mylabsbackend.model.dto.request.LabRequest
-import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest
 import ru.mylabs.mylabsbackend.model.entity.labs.Lab
-import ru.mylabs.mylabsbackend.model.entity.labs.LabsQuantity
 
 interface LabService {
     fun create(labRequest: LabRequest): Lab
@@ -11,6 +9,4 @@ interface LabService {
     fun findById(id: Long): Lab
     fun update(id: Long, labRequest: LabRequest): Lab
     fun delete(id: Long)
-    fun getQuantity(): LabsQuantity
-    fun setQuantity(quantity: LabsQuantityRequest): LabsQuantity
 }
