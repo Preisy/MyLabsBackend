@@ -7,47 +7,54 @@ import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
 import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
+import ru.mylabs.mylabsbackend.model.entity.Order
 import ru.mylabs.mylabsbackend.service.orderService.OrderService
 
 @RestController
-@RequestMapping("/orders")
 class OrderController(
     private val orderService: OrderService
 ) {
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping("/orders")
     fun getAll(
         @RequestParam offset: Int?,
         @RequestParam limit: Int?
     ) = orderService.findAll(offset, limit)
 
-    @PostMapping
+    @PostMapping("/orders")
     fun create(
         @RequestBody orderRequest: OrderRequest
     ) = orderService.create(orderRequest)
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PutMapping("/orders/{id}")
     fun update(
         @PathVariable id: Long,
         @RequestBody orderRequest: OrderRequest
     ) = orderService.update(id, orderRequest)
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/{id}")
+    @PatchMapping("/orders/{id}")
     fun patch(
         @PathVariable id: Long,
         @RequestBody orderRequest: OrderRequest
     ) = orderService.patch(id, orderRequest)
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{id}/status")
+    @PostMapping("/orders/{id}/status")
     fun setStatus(
         @PathVariable id: Long,
         @RequestBody orderStatusRequest: OrderStatusRequest
     ) = orderService.setOrderStatus(id, orderStatusRequest)
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/orders/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<ApiResponse> {
         orderService.delete(id)
         return DeletedMessage().asResponse()
+    }
+    @GetMapping("/users/orders")
+    fun findByUserId(
+        @RequestParam offset: Int?,
+        @RequestParam limit: Int?,
+    ): Iterable<Order> {
+        return orderService.findByUserId(offset, limit)
     }
 }

@@ -10,16 +10,15 @@ import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatus
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 import ru.mylabs.mylabsbackend.model.entity.Order
-import ru.mylabs.mylabsbackend.model.entity.labs.Lab
 import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
-import ru.mylabs.mylabsbackend.model.repository.LabRepository
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository
 import ru.mylabs.mylabsbackend.model.repository.UserLabRepository
-import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileServiceImpl
 import ru.mylabs.mylabsbackend.service.userService.UserService
+import ru.mylabs.mylabsbackend.utils.dateValidator.DateValidator
+import ru.mylabs.mylabsbackend.utils.dateValidator.DateValidatorImpl
 
 
 @Service
@@ -38,6 +37,8 @@ class OrderServiceImpl(
     override fun create(orderRequest: OrderRequest): Order {
         val model = orderRequest.asModel()
         model.user = meService.getMeInfo()
+        val validator: DateValidator = DateValidatorImpl("dd/MM/yyyy")
+        if (!validator.isValid(model.deadline)) throw BadRequestException()
         return orderRepository.save(model)
     }
 
@@ -81,7 +82,9 @@ class OrderServiceImpl(
 
     override fun patch(id: Long, orderRequest: OrderRequest): Order {
         return findById(id).apply {
-            if (orderRequest.deadline != null) deadline = orderRequest.deadline!!
+            if (orderRequest.deadline != null) {
+                deadline = orderRequest.deadline!!
+            }
             if (orderRequest.taskText != null) taskText = orderRequest.taskText
             if (orderRequest.executor != null) executor = orderRequest.executor
 
@@ -101,13 +104,21 @@ class OrderServiceImpl(
                 throw BadRequestException()
             }
             model.user = meService.getMeInfo()
-            if (model.user.invitedById!=null) {
+            if (model.user.invitedById != null) {
                 val user = userService.findById(model.user.invitedById!!)
-                userService.creditPercent(model.price,user)
+                userService.creditPercent(model.price, user)
             }
             return userLabRepository.save(model)
         } else {
             throw InternalServerErrorException()
         }
+    }
+
+    override fun findByUserId(offset: Int?, limit: Int?): Iterable<Order> {
+        if (orderRepository.count() <= (offset ?: 0) + (limit ?: 0)) return emptyList()
+        val user = meService.getMeInfo()
+        var res = orderRepository.findByUserId(user.id).drop(offset ?: 0)
+        if (limit != null) res = res.dropLast(res.size - limit)
+        return res
     }
 }
