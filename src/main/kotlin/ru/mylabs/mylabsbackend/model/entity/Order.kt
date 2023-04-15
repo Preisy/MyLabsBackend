@@ -18,10 +18,11 @@ class Order(
     @Column(nullable = true, length = 255)
     var executor: String? = "None",
     @Column(nullable = false)
-    var type: LabType
-
-
+    var type: LabType,
+    @Column(nullable = true, length = 255)
+    var promo: String? = ""
 ) : AbstractEntity() {
+
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne

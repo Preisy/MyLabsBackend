@@ -2,6 +2,8 @@ package ru.mylabs.mylabsbackend.model.entity
 
 import com.fasterxml.jackson.annotation.*
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -12,7 +14,7 @@ import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
 
 @Entity
-@JsonIgnoreProperties("upassword", "password")
+@JsonIgnoreProperties("upassword", "password", "invitedUsers")
 class User(
     @Column(name = "name", length = 255, nullable = false)
     var uname: String,
@@ -30,18 +32,18 @@ class User(
     @JsonIdentityReference(alwaysAsId = true)
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER))
+    var roles: MutableSet<UserRole> = mutableSetOf(UserRole(UserRoleType.USER)),
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    var invitedUsers: MutableList<User>? = null
 ) : AbstractEntity(), UserDetails {
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = [CascadeType.ALL],mappedBy = "user", fetch = FetchType.LAZY)
     var photo: UserPhoto? = null
     @Column(length = 255, nullable = false)
     var balance: Float = 0f
     @Column(length = 255, nullable = true)
     var invitedById: Long? = null
-
-    @Column(length = 255, nullable = true)
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
-    var invitedUsers: MutableList<User>? = null
     @JsonIgnore
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val roleHierarchy = RoleHierarchy.hierarchyList

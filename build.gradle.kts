@@ -37,6 +37,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
 
 	implementation("org.reactivestreams:reactive-streams:1.0.4")
+	implementation("org.springframework.boot:spring-boot-gradle-plugin:3.0.4")
 
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
 //    implementation("jakarta.xml.bind:jakarta.x	ml.bind-api:2.3.3")

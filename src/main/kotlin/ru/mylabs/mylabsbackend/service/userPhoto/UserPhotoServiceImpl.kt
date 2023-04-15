@@ -101,9 +101,10 @@ class UserPhotoServiceImpl(
     override fun uploadPhoto(file: MultipartFile): UserPhoto {
         if (file.isEmpty) throw FileIsEmptyException()
         if (file.originalFilename == null) throw IncorrectFileName()
+        if (file.originalFilename!!.split(".").last() != "png" && file.originalFilename!!.split(".").last() != "jpg")
+            throw BadRequestException()
         if (file.size > 300 * 1024) throw FileIsTooBigException()
         uploadsFolderPath.mkdirs()
-
         var user = meService.getMeInfo()
         if (userHavePhoto()) {
             deletePhoto()

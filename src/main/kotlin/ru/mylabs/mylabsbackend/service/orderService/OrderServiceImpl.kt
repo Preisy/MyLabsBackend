@@ -4,6 +4,7 @@ package ru.mylabs.mylabsbackend.service.orderService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadRequestException
+import ru.mylabs.mylabsbackend.model.dto.exception.ConflictException
 import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
 import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
@@ -12,6 +13,7 @@ import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 import ru.mylabs.mylabsbackend.model.entity.Order
 import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository
+import ru.mylabs.mylabsbackend.model.repository.PromocodeRepository
 import ru.mylabs.mylabsbackend.model.repository.UserLabRepository
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
@@ -28,10 +30,15 @@ class OrderServiceImpl(
     private val taskFileService: TaskFileService,
     private val userService: UserService,
     private val meService: MeService,
+    private val promocodeRepository: PromocodeRepository
 ) : OrderService {
     private val logger = LoggerFactory.getLogger(TaskFileServiceImpl::class.java)
     private fun findById(id: Long): Order {
         return orderRepository.findById(id).orElseThrow { ResourceNotFoundException("Order") }
+    }
+
+    private fun findByPromoname(promoName: String) = promocodeRepository.findByPromoName(promoName).orElseThrow {
+        ConflictException("Promo-code does not exist")
     }
 
     override fun create(orderRequest: OrderRequest): Order {
@@ -39,6 +46,10 @@ class OrderServiceImpl(
         model.user = meService.getMeInfo()
         val validator: DateValidator = DateValidatorImpl("dd/MM/yyyy")
         if (!validator.isValid(model.deadline)) throw BadRequestException()
+        model.promo = orderRequest.promoName
+        if (model.promo != null) {
+            findByPromoname(model.promo!!)
+        }
         return orderRepository.save(model)
     }
 
