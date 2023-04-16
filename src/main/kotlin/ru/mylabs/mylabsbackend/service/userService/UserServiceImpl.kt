@@ -25,7 +25,7 @@ class UserServiceImpl(
 ) : UserService, CrudServiceImpl<UserRequest, User, Long, UserRepository>(
     User::class.simpleName
 ) {
-    override fun findById(id: Long): User = repository.findById(id).orElseThrow{ResourceNotFoundException("User not found")}
+    override fun findById(id: Long): User = repository.findById(id).orElseThrow{ResourceNotFoundException("User")}
     override fun create(request: UserRequest): User {
         val model = request.asModel()
         model.uPassword = passwordEncoder.encode(request.password)
@@ -34,7 +34,7 @@ class UserServiceImpl(
 
 
     override fun findByLogin(login: String): User = repository.findByEmail(login).orElseThrow {
-        ResourceNotFoundException("User not found")
+        ResourceNotFoundException("User")
     }
 
     override fun loadUserByUsername(login: String): UserDetails {
@@ -42,20 +42,20 @@ class UserServiceImpl(
     }
 
     override fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User {
-        val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User not found") }
+        val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
         user.takeIf { !it.containsRole(it, roleRequest) }?.roles?.add(UserRole(roleRequest.name))
         return repository.save(user)
     }
 
     override fun deleteRole(id: Long, roleRequest: ChangeRoleRequest): User {
-        val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User not found") }
+        val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
         if (roleRequest.name != UserRoleType.USER)
             user.removeRole(user, roleRequest)
         else throw BadCredentialsException()
         return repository.save(user)
     }
 
-    private fun findByEmail(email: String) = repository.findByEmail(email).orElseThrow{ResourceNotFoundException("User not found")}
+    private fun findByEmail(email: String) = repository.findByEmail(email).orElseThrow{ResourceNotFoundException("User")}
 
     override fun update(resetPasswordRequest: ResetPasswordRequest): User {
         resetPasswordRequest.newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword)

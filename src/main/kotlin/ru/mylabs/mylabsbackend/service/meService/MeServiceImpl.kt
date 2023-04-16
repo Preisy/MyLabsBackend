@@ -17,7 +17,7 @@ class MeServiceImpl(
     override fun getMeInfo(): User {
         val auth: Authentication = SecurityContextHolder.getContext().authentication
         val user = repository.findByEmail(auth.name).orElseThrow {
-            ResourceNotFoundException("User not found")
+            ResourceNotFoundException("User")
         }
         return user
     }

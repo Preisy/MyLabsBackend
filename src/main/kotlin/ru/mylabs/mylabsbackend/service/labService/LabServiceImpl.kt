@@ -23,7 +23,7 @@ class LabServiceImpl(
     }
 
     override fun findById(id: Long): Lab =
-        labRepository.findById(id).orElseThrow { ResourceNotFoundException("Lab not found") }
+        labRepository.findById(id).orElseThrow { ResourceNotFoundException("Lab") }
 
     override fun update(id: Long, labRequest: LabRequest) = findById(id).apply {
         title = labRequest.title
@@ -35,7 +35,7 @@ class LabServiceImpl(
     }
 
     override fun delete(id: Long) {
-        if (!labRepository.existsById(id)) throw ResourceNotFoundException("Lab not found")
+        if (!labRepository.existsById(id)) throw ResourceNotFoundException("Lab")
         labRepository.deleteById(id)
     }
 

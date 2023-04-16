@@ -30,8 +30,8 @@ class UserLabServiceImpl(
 
     override fun findById(id: Long): UserLab {
         val user = meService.getMeInfo()
-        val res = userLabRepository.findById(id).orElseThrow { ResourceNotFoundException("Lab not found") }
-        if (res.user.id != user.id) throw ResourceNotFoundException("Lab not found")
+        val res = userLabRepository.findById(id).orElseThrow { ResourceNotFoundException("Lab") }
+        if (res.user.id != user.id) throw ResourceNotFoundException("Lab")
         return res
     }
 
@@ -43,7 +43,7 @@ class UserLabServiceImpl(
     }
 
     override fun delete(id: Long) {
-        if (!userLabRepository.existsById(id)) throw ResourceNotFoundException("Lab not found")
+        if (!userLabRepository.existsById(id)) throw ResourceNotFoundException("Lab")
         userLabRepository.deleteById(id)
     }
 

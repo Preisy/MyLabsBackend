@@ -21,7 +21,7 @@ class EmailConfirmationToken(
     var uPassword: String,
     @Column(length = 255, nullable = false)
     var contact: String,
-    @Column(length = 255, nullable = false)
+    @Column(length = 255, nullable = true)
     var invitedById: Long? = null
 
 

@@ -24,7 +24,7 @@ class TaskFileServiceImpl(
     override fun findAllFilesInOrder(orderId: Long): Iterable<TaskFile> {
         val order = orderRepository
             .findById(orderId)
-            .orElseThrow { ResourceNotFoundException("Order not found") }
+            .orElseThrow { ResourceNotFoundException("Order") }
         return order.taskFiles
     }
 
@@ -34,7 +34,7 @@ class TaskFileServiceImpl(
             .toLongOrNull() ?: throw IncorrectFileName()
 
         val filenameBd = taskFileRepository.findById(fileId)
-            .orElseThrow { ResourceNotFoundException("File not found") }
+            .orElseThrow { ResourceNotFoundException("File") }
             .filename
 
         if (filenameBd == null) {
@@ -44,7 +44,7 @@ class TaskFileServiceImpl(
 
         if (filenameBd != filename) {
 //            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
-            throw ResourceNotFoundException("File not found")
+            throw ResourceNotFoundException("File")
         }
 
         val file = File(uploadsFolderPath.toString(), filename)
@@ -65,13 +65,13 @@ class TaskFileServiceImpl(
 
     override fun deleteFile(orderId: Long, fileId: Long) {
         val taskFile = taskFileRepository.findById(fileId)
-            .orElseThrow { ResourceNotFoundException("File not found") }
+            .orElseThrow { ResourceNotFoundException("File") }
 
         val isOrderContainsFile = orderRepository.findById(orderId)
-            .orElseThrow { ResourceNotFoundException("Order not found") }
+            .orElseThrow { ResourceNotFoundException("Order") }
             .taskFiles.contains(taskFile)
         if (!isOrderContainsFile) {
-            throw ResourceNotFoundException("File not found")
+            throw ResourceNotFoundException("File")
         }
 
         taskFileRepository.deleteById(fileId)
@@ -101,7 +101,7 @@ class TaskFileServiceImpl(
         if (file.size > 300 * 1024) throw FileIsTooBigException()
         uploadsFolderPath.mkdirs()
 
-        val order: Order = orderRepository.findById(orderId).orElseThrow { ResourceNotFoundException("OrderNotFound") }
+        val order: Order = orderRepository.findById(orderId).orElseThrow { ResourceNotFoundException("Order") }
         val taskFile = taskFileRepository.save(TaskFile(order))
 
         val newFileName = "${taskFile.id}.${getFileExtension(file.originalFilename!!)}"

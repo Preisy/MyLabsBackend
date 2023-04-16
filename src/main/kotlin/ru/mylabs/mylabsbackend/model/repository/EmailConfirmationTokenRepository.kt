@@ -8,4 +8,5 @@ import ru.mylabs.mylabsbackend.model.entity.token.EmailConfirmationToken
 @Repository
 interface EmailConfirmationTokenRepository : CrudRepository<EmailConfirmationToken, Long> {
     fun findByEmail(email: String): EmailConfirmationToken
+    fun existsByEmail(email: String): Boolean
 }
