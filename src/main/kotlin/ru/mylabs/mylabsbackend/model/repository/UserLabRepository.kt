@@ -7,5 +7,5 @@ import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 
 @Repository
 interface UserLabRepository : CrudRepository<UserLab, Long> {
-    fun findByUserId(sort: Sort, userId: Long): Iterable<UserLab>
+    fun findByUserId(userId: Long): Iterable<UserLab>
 }

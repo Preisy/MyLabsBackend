@@ -23,7 +23,7 @@ class UserLabServiceImpl(
     override fun findByUserId(offset: Int?, limit: Int?): Iterable<UserLab> {
         if (userLabRepository.count() <= (offset ?: 0) + (limit ?: 0)) return emptyList()
         val user = meService.getMeInfo()
-        var res = userLabRepository.findByUserId(Sort.by(Sort.Direction.DESC, "priority"), user.id).drop(offset ?: 0)
+        var res = userLabRepository.findByUserId(user.id).drop(offset ?: 0)
         if (limit != null) res = res.dropLast(res.size - limit)
         return res
     }

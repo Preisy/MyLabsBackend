@@ -16,4 +16,5 @@ interface UserService : CrudService<UserRequest, User, Long>, UserDetailsService
     fun update(resetPasswordRequest: ResetPasswordRequest): User
     fun creditPercent(labPrice: Int, user: User): User
     override fun findById(id: Long): User
+    fun getInvitedUsers(id: Long):  MutableList<User>
 }

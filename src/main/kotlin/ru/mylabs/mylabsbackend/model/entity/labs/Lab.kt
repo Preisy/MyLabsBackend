@@ -16,7 +16,7 @@ class Lab(
     var price: Int,
 
     @Column
-    var type: LabType,
+    var type: String,
 
     @Column
     @Value("0")

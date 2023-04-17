@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import jakarta.persistence.*
-import ru.mylabs.mylabsbackend.model.entity.labs.LabType
 
 @Entity
 @Table(name = "order_table")
@@ -18,7 +17,7 @@ class Order(
     @Column(nullable = true, length = 255)
     var executor: String? = "None",
     @Column(nullable = false)
-    var type: LabType,
+    var type: String,
     @Column(nullable = true, length = 255)
     var promo: String? = ""
 ) : AbstractEntity() {

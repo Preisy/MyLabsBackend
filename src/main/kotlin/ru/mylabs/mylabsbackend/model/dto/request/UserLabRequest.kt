@@ -1,12 +1,11 @@
 package ru.mylabs.mylabsbackend.model.dto.request
 
-import ru.mylabs.mylabsbackend.model.entity.labs.LabType
 import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 
 class UserLabRequest(
     val title: String,
     val price: Int,
-    val type: LabType
+    val type: String
 ) {
     fun asModel() = UserLab(title, price, type)
 }

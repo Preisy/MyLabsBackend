@@ -20,7 +20,7 @@ class UserLab(
     var price: Int,
 
     @Column
-    var type: LabType
+    var type: String
 
     ) : AbstractEntity() {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")

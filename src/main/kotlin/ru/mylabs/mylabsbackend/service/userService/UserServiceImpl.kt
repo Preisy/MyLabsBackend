@@ -26,9 +26,11 @@ class UserServiceImpl(
     User::class.simpleName
 ) {
     override fun findById(id: Long): User = repository.findById(id).orElseThrow{ResourceNotFoundException("User")}
+
     override fun create(request: UserRequest): User {
         val model = request.asModel()
         model.uPassword = passwordEncoder.encode(request.password)
+        model.balance = 0f
         return repository.save(model)
     }
 
@@ -69,6 +71,10 @@ class UserServiceImpl(
         val percent = propertiesService.getPercent().property.toFloat()
         user.balance += (percent/100)*labPrice
         return repository.save(user)
+    }
+    override fun getInvitedUsers(id: Long): MutableList<User> {
+        val user = findById(id)
+        return user.invitedUsers!!
     }
 
 }
