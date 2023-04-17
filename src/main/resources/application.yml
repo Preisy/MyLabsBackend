@@ -1,5 +1,5 @@
 server:
-  hostname: mylabs.ru
+  hostname: my-labs.ru
   servlet:
     context-path: /api/dev
 
