@@ -104,7 +104,7 @@ class OrderServiceImpl(
     }
 
     override fun setOrderStatus(id: Long, orderStatusRequest: OrderStatusRequest): UserLab {
-
+        val order = orderRepository.findById(id).orElseThrow{ResourceNotFoundException("Order")}
         if (orderStatusRequest.status == OrderStatus.Complete) {
             if (orderStatusRequest.metadata == null)
                 throw BadRequestException("Complete order status require Lab info metadata")
@@ -114,7 +114,7 @@ class OrderServiceImpl(
             } catch (e: NullPointerException) {
                 throw BadRequestException()
             }
-            model.user = meService.getMeInfo()
+            model.user = order.user
             if (model.user.invitedById != null) {
                 val user = userService.findById(model.user.invitedById!!)
                 userService.creditPercent(model.price, user)

@@ -43,7 +43,7 @@ class User(
     @OneToOne(cascade = [CascadeType.ALL],orphanRemoval = true, mappedBy = "user", fetch = FetchType.LAZY)
     var photo: UserPhoto? = null
     @Column(length = 255, nullable = false)
-    @Value("0f")
+    @setparam:DefaultValue("0f")
     var balance: Float = 0f
     @Column(length = 255, nullable = true)
     var invitedById: Long? = null
