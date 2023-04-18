@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -41,6 +43,7 @@ class User(
     @OneToOne(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
     var photo: UserPhoto? = null
     @Column(length = 255, nullable = false)
+    @Value("0f")
     var balance: Float = 0f
     @Column(length = 255, nullable = true)
     var invitedById: Long? = null

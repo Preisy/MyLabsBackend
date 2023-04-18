@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -21,20 +22,21 @@ class JwtAuthorizationFilter(
 
 
     private fun isExcludedUrl(req: HttpServletRequest): Boolean {
-
         val excludedUrls =
-            listOf(
-                "/health",
-                "/login",
-                "/signup",
-                "/signup/confirm",
-                "/labs",
-                "/reviews",
-                "/labs/quantity",
-                "/password/forget",
-                "/password/reset"
+            mapOf(
+                Pair("/health", HttpMethod.GET.toString()),
+                Pair("/login", HttpMethod.POST.toString()),
+                Pair("/signup", HttpMethod.POST.toString()),
+                Pair("/signup/confirm", HttpMethod.POST.toString()),
+                Pair("/labs", HttpMethod.GET.toString()),
+                Pair("/reviews", HttpMethod.GET.toString()),
+                Pair("/labs/quantity", HttpMethod.GET.toString()),
+                Pair("/password/forget", HttpMethod.POST.toString()),
+                Pair("/password/reset", HttpMethod.POST.toString())
             )
-        return excludedUrls.any { it == req.servletPath }
+
+        val pair = Pair(req.contextPath, req.method)
+        return excludedUrls.any { it.toPair() == pair }
     }
 
     @Throws(IOException::class, ServletException::class)

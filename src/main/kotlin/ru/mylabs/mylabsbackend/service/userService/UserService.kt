@@ -10,7 +10,6 @@ import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.service.crudService.CrudService
 import java.util.*
 interface UserService : CrudService<UserRequest, User, Long>, UserDetailsService {
-    fun findByLogin(login: String): User
     fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User
     fun deleteRole(id: Long, roleRequest: ChangeRoleRequest): User
     fun update(resetPasswordRequest: ResetPasswordRequest): User

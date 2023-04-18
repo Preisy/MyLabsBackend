@@ -12,7 +12,7 @@ class PropertiesController(
     private val propertiesService: PropertiesService
 ) {
 
-    @PutMapping("/labs/quantity")
+    @PostMapping("/labs/quantity")
     fun setQuantity(@RequestBody labsQuantityRequest: LabsQuantityRequest): Property {
         return propertiesService.setQuantity(labsQuantityRequest)
     }
@@ -20,7 +20,7 @@ class PropertiesController(
     fun getPercent(): Property {
         return propertiesService.getPercent()
     }
-    @PutMapping("/properties/percent")
+    @PostMapping("/properties/percent")
     fun setPercent(@RequestBody referralPercentageRequest: ReferralPercentageRequest): Property {
         return propertiesService.setPercent(referralPercentageRequest)
     }

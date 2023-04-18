@@ -1,7 +1,5 @@
 package ru.mylabs.mylabsbackend.configuration
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -14,8 +12,8 @@ import org.springframework.security.web.SecurityFilterChain
 import ru.mylabs.mylabsbackend.filter.JwtAuthenticationFilter
 import ru.mylabs.mylabsbackend.filter.JwtAuthorizationFilter
 import ru.mylabs.mylabsbackend.model.dto.exception.ForbiddenException
+import ru.mylabs.mylabsbackend.model.dto.exception.UnauthorizedException
 import ru.mylabs.mylabsbackend.utils.JwtTokenUtil
-import ru.mylabs.mylabsbackend.utils.RestAuthenticationEntryPoint
 
 
 @Configuration
@@ -25,10 +23,6 @@ class SecurityConfig(
 ) {
     private val jwtToken = JwtTokenUtil()
 
-    @Autowired
-    @Qualifier("restAuthenticationEntryPoint")
-    val authEntryPoint: RestAuthenticationEntryPoint = RestAuthenticationEntryPoint()
-
     private fun authManager(http: HttpSecurity): AuthenticationManager {
         val authenticationManagerBuilder = http.getSharedObject(
             AuthenticationManagerBuilder::class.java
@@ -36,7 +30,6 @@ class SecurityConfig(
         authenticationManagerBuilder.userDetailsService(userDetailsService)
         return authenticationManagerBuilder.build()
     }
-
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -67,8 +60,7 @@ class SecurityConfig(
             }
             .exceptionHandling { ex ->
                 ex
-                    //.authenticationEntryPoint(UnauthorizedException())
-                    .authenticationEntryPoint(authEntryPoint)
+                    .authenticationEntryPoint(UnauthorizedException())
                     .accessDeniedHandler(ForbiddenException())
             }
             .authenticationManager(authenticationManager)

@@ -15,6 +15,7 @@ import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
+import kotlin.jvm.optionals.getOrNull
 
 @Service("UserService")
 class UserServiceImpl(
@@ -30,17 +31,13 @@ class UserServiceImpl(
     override fun create(request: UserRequest): User {
         val model = request.asModel()
         model.uPassword = passwordEncoder.encode(request.password)
-        model.balance = 0f
         return repository.save(model)
     }
 
-
-    override fun findByLogin(login: String): User = repository.findByEmail(login).orElseThrow {
-        ResourceNotFoundException("User")
-    }
-
-    override fun loadUserByUsername(login: String): UserDetails {
-        return findByLogin(login)
+    override fun loadUserByUsername(email: String): UserDetails? {
+        val res = repository.findByEmail(email)
+        return if (!res.isEmpty) res.get()
+        else null
     }
 
     override fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User {
