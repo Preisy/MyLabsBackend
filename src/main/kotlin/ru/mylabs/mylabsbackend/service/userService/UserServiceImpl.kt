@@ -8,24 +8,24 @@ import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.ResetPasswordRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
-import ru.mylabs.mylabsbackend.model.entity.Property
 import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
+import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
-import java.util.*
 
-@Service
+@Service("UserService")
 class UserServiceImpl(
     override val repository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
-    private val propertiesService: PropertiesService
+    private val propertiesService: PropertiesService,
+    private val meService: MeService
 ) : UserService, CrudServiceImpl<UserRequest, User, Long, UserRepository>(
     User::class.simpleName
 ) {
-    override fun findById(id: Long): User = repository.findById(id).orElseThrow{ResourceNotFoundException("User")}
+    override fun findById(id: Long): User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
 
     override fun create(request: UserRequest): User {
         val model = request.asModel()
@@ -57,7 +57,8 @@ class UserServiceImpl(
         return repository.save(user)
     }
 
-    private fun findByEmail(email: String) = repository.findByEmail(email).orElseThrow{ResourceNotFoundException("User")}
+    private fun findByEmail(email: String) =
+        repository.findByEmail(email).orElseThrow { ResourceNotFoundException("User") }
 
     override fun update(resetPasswordRequest: ResetPasswordRequest): User {
         resetPasswordRequest.newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword)
@@ -69,12 +70,18 @@ class UserServiceImpl(
 
     override fun creditPercent(labPrice: Int, user: User): User {
         val percent = propertiesService.getPercent().property.toFloat()
-        user.balance += (percent/100)*labPrice
+        user.balance += (percent / 100) * labPrice
         return repository.save(user)
     }
+
     override fun getInvitedUsers(id: Long): MutableList<User> {
         val user = findById(id)
         return user.invitedUsers!!
+    }
+
+    override fun canViewInvitedUsers(id: Long): Boolean {
+        val user = meService.getMeInfo()
+        return user.id == id
     }
 
 }
