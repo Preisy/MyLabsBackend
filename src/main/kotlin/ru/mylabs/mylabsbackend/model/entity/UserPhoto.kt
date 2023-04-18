@@ -6,7 +6,7 @@ import jakarta.persistence.*
 @Entity
 @JsonIgnoreProperties("user")
 class UserPhoto(
-    @OneToOne(cascade = [CascadeType.ALL],fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     val user: User,
     @Column(nullable = true, length = 255)

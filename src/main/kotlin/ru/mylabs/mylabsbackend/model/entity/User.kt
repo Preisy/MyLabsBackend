@@ -40,7 +40,7 @@ class User(
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     var invitedUsers: MutableList<User>? = null
 ) : AbstractEntity(), UserDetails {
-    @OneToOne(cascade = [CascadeType.ALL], mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(cascade = [CascadeType.ALL],orphanRemoval = true, mappedBy = "user", fetch = FetchType.LAZY)
     var photo: UserPhoto? = null
     @Column(length = 255, nullable = false)
     @Value("0f")
