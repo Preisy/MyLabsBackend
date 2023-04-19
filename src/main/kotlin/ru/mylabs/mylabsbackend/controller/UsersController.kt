@@ -1,14 +1,20 @@
 package ru.mylabs.mylabsbackend.controller
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
+import org.springframework.util.FileCopyUtils
 import org.springframework.web.bind.annotation.*
 import ru.mylabs.mylabsbackend.model.dto.message.DeletedMessage
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.service.userService.UserService
+import java.io.BufferedInputStream
+import java.io.FileInputStream
+import java.io.InputStream
+import java.net.URLConnection
 
 
 @RestController
@@ -42,4 +48,14 @@ class UsersController(
     @PreAuthorize("hasRole('ADMIN')|| @UserService.canViewInvitedUsers(#id)")
     @GetMapping("/{id}/invited")
     fun getInvitedUsers(@PathVariable id: Long) = userService.getInvitedUsers(id)
+    @GetMapping("/{id}/photo")
+    fun getPhoto(@PathVariable id: Long, response: HttpServletResponse) {
+        val photo = userService.findUserPhoto(id)
+        val mimeType = URLConnection.guessContentTypeFromName(photo.name)
+        response.contentType = mimeType
+        response.setHeader("Content-Disposition", "inline; filename=\"${photo.name}\"")
+        response.setContentLength(photo.length().toInt())
+        val inputStream: InputStream = BufferedInputStream(FileInputStream(photo))
+        FileCopyUtils.copy(inputStream, response.outputStream)
+    }
 }

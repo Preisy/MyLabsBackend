@@ -7,7 +7,7 @@ spring:
   datasource:
     username: root
     password: rootroot
-    url: jdbc:mariadb://185.182.111.172:3306/mylabs_dev
+    url: jdbc:mariadb://localhost:3306/mylabs
     driver-class-name: org.mariadb.jdbc.Driver
   mail:
     protocol: smtp

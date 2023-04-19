@@ -1,20 +1,26 @@
 package ru.mylabs.mylabsbackend.service.userService
 
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadCredentialsException
+import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
 import ru.mylabs.mylabsbackend.model.dto.request.ChangeRoleRequest
 import ru.mylabs.mylabsbackend.model.dto.request.ResetPasswordRequest
 import ru.mylabs.mylabsbackend.model.dto.request.UserRequest
+import ru.mylabs.mylabsbackend.model.dto.response.InvitedUserResponse
 import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
+import ru.mylabs.mylabsbackend.model.repository.UserPhotoRepository
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
+import ru.mylabs.mylabsbackend.service.userPhoto.UserPhotoServiceImpl
+import java.io.File
 import kotlin.jvm.optionals.getOrNull
 
 @Service("UserService")
@@ -22,10 +28,13 @@ class UserServiceImpl(
     override val repository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
     private val propertiesService: PropertiesService,
-    private val meService: MeService
+    private val meService: MeService,
+    private val userPhotoRepository: UserPhotoRepository
 ) : UserService, CrudServiceImpl<UserRequest, User, Long, UserRepository>(
     User::class.simpleName
 ) {
+    private val uploadsFolderPath = File("src/main/resources/uploads")
+    private val logger = LoggerFactory.getLogger(UserPhotoServiceImpl::class.java)
     override fun findById(id: Long): User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
 
     override fun create(request: UserRequest): User {
@@ -71,14 +80,55 @@ class UserServiceImpl(
         return repository.save(user)
     }
 
-    override fun getInvitedUsers(id: Long): MutableList<User> {
+    override fun calculatePercent(labPrice: Int): Float {
+        val percent = propertiesService.getPercent().property.toFloat()
+        return (percent / 100) * labPrice
+    }
+
+    override fun getInvitedUsers(id: Long): MutableList<InvitedUserResponse> {
+        val res : MutableList<InvitedUserResponse>  = mutableListOf()
         val user = findById(id)
-        return user.invitedUsers!!
+        user.invitedUsers!!.forEach {
+            res.add(InvitedUserResponse(it,it.referralDeductions))
+        }
+        return res
     }
 
     override fun canViewInvitedUsers(id: Long): Boolean {
         val user = meService.getMeInfo()
         return user.id == id
+    }
+    fun userHavePhoto(id: Long): Boolean {
+        val user = findById(id)
+        return user.photo != null
+    }
+    override fun findUserPhoto(id: Long): File {
+        if (!userHavePhoto(id))
+            throw ResourceNotFoundException("Photo")
+
+        val photoId = findById(id).photo!!.id
+        val filename: String =  findById(id).photo!!.filename!!
+        val filenameBd = userPhotoRepository.findById(photoId)
+            .orElseThrow { ResourceNotFoundException("File") }
+            .filename
+
+        if (filenameBd == null) {
+            logger.error("UserPhoto.photoPath in is null")
+            throw InternalServerErrorException()
+        }
+
+        if (filenameBd != filename) {
+//            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
+            throw ResourceNotFoundException("File")
+        }
+
+        val file = File(uploadsFolderPath.toString(), filename)
+        if (!file.exists()) {
+            logger.error("${file.absolutePath} not exist while database store it")
+            throw InternalServerErrorException()
+        }
+
+        return file
     }
 
 }

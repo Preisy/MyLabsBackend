@@ -15,6 +15,7 @@ import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.model.repository.OrderRepository
 import ru.mylabs.mylabsbackend.model.repository.PromocodeRepository
 import ru.mylabs.mylabsbackend.model.repository.UserLabRepository
+import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileServiceImpl
@@ -30,7 +31,8 @@ class OrderServiceImpl(
     private val taskFileService: TaskFileService,
     private val userService: UserService,
     private val meService: MeService,
-    private val promocodeRepository: PromocodeRepository
+    private val promocodeRepository: PromocodeRepository,
+    private val userRepository: UserRepository
 ) : OrderService {
     private val logger = LoggerFactory.getLogger(TaskFileServiceImpl::class.java)
     private fun findById(id: Long): Order {
@@ -118,6 +120,8 @@ class OrderServiceImpl(
             if (model.user.invitedById != null) {
                 val user = userService.findById(model.user.invitedById!!)
                 userService.creditPercent(model.price, user)
+                model.user.referralDeductions = userService.calculatePercent(model.price)
+                userRepository.save(model.user)
             }
             return userLabRepository.save(model)
         } else {

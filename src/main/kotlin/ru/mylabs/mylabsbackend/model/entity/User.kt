@@ -16,7 +16,7 @@ import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
 
 
 @Entity
-@JsonIgnoreProperties("upassword", "password", "invitedUsers")
+@JsonIgnoreProperties("upassword", "password", "invitedUsers", "referralDeductions")
 class User(
     @Column(name = "name", length = 255, nullable = false)
     var uname: String,
@@ -38,7 +38,10 @@ class User(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    var invitedUsers: MutableList<User>? = null
+    var invitedUsers: MutableList<User>? = null,
+    @Column(length = 255, nullable = false)
+    @setparam:DefaultValue("0f")
+    var referralDeductions: Float = 0f
 ) : AbstractEntity(), UserDetails {
     @OneToOne(cascade = [CascadeType.ALL],orphanRemoval = true, mappedBy = "user", fetch = FetchType.LAZY)
     var photo: UserPhoto? = null
