@@ -1,7 +1,7 @@
 server:
   hostname: my-labs.ru
   servlet:
-    context-path: /api/dev
+    context-path: /api
 
 spring:
   datasource:
