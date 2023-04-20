@@ -98,7 +98,7 @@ class TaskFileServiceImpl(
     override fun uploadFile(orderId: Long, file: MultipartFile): TaskFile {
         if (file.isEmpty) throw FileIsEmptyException()
         if (file.originalFilename == null) throw IncorrectFileName()
-        if (file.size > 300 * 1024) throw FileIsTooBigException()
+        if (file.size > 10 * 1024 * 1024) throw FileIsTooBigException()
         uploadsFolderPath.mkdirs()
 
         val order: Order = orderRepository.findById(orderId).orElseThrow { ResourceNotFoundException("Order") }
