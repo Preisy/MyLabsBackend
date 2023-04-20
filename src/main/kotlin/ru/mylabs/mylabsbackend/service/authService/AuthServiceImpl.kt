@@ -64,7 +64,7 @@ class AuthServiceImpl(
         emailConfirmationTokenRepository.save(emailConfirmationToken)
         val subject = "Complete Registration!"
         val text =
-            "Enter the following code: ${emailConfirmationToken.confirmationToken} or just click on the link: https://mylabs.ru/confirm?email=${emailConfirmationToken.email}"
+            "Enter the following code: ${emailConfirmationToken.confirmationToken} or just click on the link: https://my-labs.ru/confirm?email=${emailConfirmationToken.email}"
         val mailMessage = ConfirmationMailMessage(subject, text, emailConfirmationToken.email).asMail()
         javaMailSender.send(mailMessage)
         return ConfirmMessage()
@@ -100,7 +100,7 @@ class AuthServiceImpl(
         passwordConfirmationTokenRepository.save(passwordConfToken)
         val subject = "Reset your password!"
         val text =
-            "Enter the following code: ${passwordConfToken.confirmationToken} or just click on the link: https://mylabs.ru/resetPassword?email=${passwordConfToken.email}"
+            "Enter the following code: ${passwordConfToken.confirmationToken} or just click on the link: https://my-labs.ru/reset?email=${passwordConfToken.email}"
         val mailMessage = ConfirmationMailMessage(subject, text, passwordConfToken.email).asMail()
         javaMailSender.send(mailMessage)
         return ConfirmMessage()
