@@ -28,4 +28,4 @@ spring:
       hibernate:
         ddl-auto: update
         dialect: org.hibernate.dialect.MariaDB103Dialect
-    show-sql: true
+    show-sql: false

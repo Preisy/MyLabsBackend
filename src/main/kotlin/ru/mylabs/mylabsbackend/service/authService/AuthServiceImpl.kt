@@ -100,7 +100,7 @@ class AuthServiceImpl(
         passwordConfirmationTokenRepository.save(passwordConfToken)
         val subject = "Reset your password!"
         val text =
-            "Enter the following code: ${passwordConfToken.confirmationToken} or just click on the link: https://my-labs.ru/reset?email=${passwordConfToken.email}"
+            "Enter the following code: ${passwordConfToken.confirmationToken} or just click on the link: https://my-labs.ru/reset?email=${passwordConfToken.email}&code=${passwordConfToken.confirmationToken}"
         val mailMessage = ConfirmationMailMessage(subject, text, passwordConfToken.email).asMail()
         javaMailSender.send(mailMessage)
         return ConfirmMessage()
