@@ -1,5 +1,6 @@
 package ru.mylabs.mylabsbackend.service.authService
 
+import kotlinx.serialization.internal.throwMissingFieldException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -54,8 +55,11 @@ class AuthServiceImpl(
             signUpRequest.contact
         )
         if (signUpRequest.invitedById != null) {
-            var userInvitedBy = userService.findById(signUpRequest.invitedById!!)
-            emailConfirmationToken.invitedById = signUpRequest.invitedById
+            if (userRepository.existsById(signUpRequest.invitedById!!)) {
+                var userInvitedBy = userService.findById(signUpRequest.invitedById!!)
+                emailConfirmationToken.invitedById = signUpRequest.invitedById
+            }
+            else throw ConflictException("Invalid referral link")
         }
         emailConfirmationTokenRepository.save(emailConfirmationToken)
         val subject = "Complete Registration!"
