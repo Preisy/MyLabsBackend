@@ -31,6 +31,8 @@ spring:
     generate-ddl: true
     properties:
       hibernate:
+        ejb:
+          interceptor: ru.mylabs.mylabsbackend.utils.TaskFilesInterceptor
         ddl-auto: update
         dialect: org.hibernate.dialect.MariaDB103Dialect
     show-sql: false

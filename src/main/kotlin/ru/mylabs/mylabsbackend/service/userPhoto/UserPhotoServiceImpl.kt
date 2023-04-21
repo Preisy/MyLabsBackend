@@ -19,7 +19,7 @@ class UserPhotoServiceImpl(
     private val meService: MeService,
     private val userRepository: UserRepository
 ) : UserPhotoService {
-    private val uploadsFolderPath = File("src/main/resources/uploads")
+    private val uploadsFolderPath = File("src/main/resources/avatars")
     private val logger = LoggerFactory.getLogger(UserPhotoServiceImpl::class.java)
 
 

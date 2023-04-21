@@ -1,7 +1,5 @@
 package ru.mylabs.mylabsbackend.service.authService
 
-import kotlinx.serialization.internal.throwMissingFieldException
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -20,7 +18,7 @@ import ru.mylabs.mylabsbackend.model.repository.EmailConfirmationTokenRepository
 import ru.mylabs.mylabsbackend.model.repository.PasswordConfirmationTokenRepository
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.userService.UserService
-import ru.mylabs.mylabsbackend.utils.EmailValidator
+import ru.mylabs.mylabsbackend.utils.validators.EmailValidator
 import ru.mylabs.mylabsbackend.utils.JwtTokenUtil
 import java.util.*
 import kotlin.random.Random
@@ -81,11 +79,9 @@ class AuthServiceImpl(
             }
             val token: String = jwtTokenUtil.generateToken(confToken.email)
             var user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
-            if (confToken.invitedById != null) {
                 user.invitedById = confToken.invitedById
                 var userInvitedBy = userService.findById(user.invitedById!!)
                 userInvitedBy.invitedUsers?.add(user)
-            }
             userRepository.save(user)
             emailConfirmationTokenRepository.delete(confToken)
             return TokenResponse(token)

@@ -1,4 +1,4 @@
-package ru.mylabs.mylabsbackend.utils
+package ru.mylabs.mylabsbackend.utils.validators
 
 import java.util.regex.Pattern
 

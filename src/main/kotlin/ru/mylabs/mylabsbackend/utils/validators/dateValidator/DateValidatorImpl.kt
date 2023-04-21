@@ -1,4 +1,4 @@
-package ru.mylabs.mylabsbackend.utils.dateValidator
+package ru.mylabs.mylabsbackend.utils.validators.dateValidator
 
 import java.text.DateFormat
 import java.text.ParseException

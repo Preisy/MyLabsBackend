@@ -20,8 +20,8 @@ import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileServiceImpl
 import ru.mylabs.mylabsbackend.service.userService.UserService
-import ru.mylabs.mylabsbackend.utils.dateValidator.DateValidator
-import ru.mylabs.mylabsbackend.utils.dateValidator.DateValidatorImpl
+import ru.mylabs.mylabsbackend.utils.validators.dateValidator.DateValidator
+import ru.mylabs.mylabsbackend.utils.validators.dateValidator.DateValidatorImpl
 
 
 @Service
@@ -120,7 +120,7 @@ class OrderServiceImpl(
             if (model.user.invitedById != null) {
                 val user = userService.findById(model.user.invitedById!!)
                 userService.creditPercent(model.price, user)
-                model.user.referralDeductions = userService.calculatePercent(model.price)
+                model.user.referralDeductions += userService.calculatePercent(model.price)
                 userRepository.save(model.user)
             }
             return userLabRepository.save(model)
