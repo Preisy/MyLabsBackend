@@ -18,7 +18,7 @@ interface UserService : CrudService<UserRequest, User, Long>, UserDetailsService
     fun creditPercent(labPrice: Int, user: User): User
     fun calculatePercent(labPrice: Int): Float
     override fun findById(id: Long): User
-    fun getInvitedUsers(id: Long):  MutableList<InvitedUserResponse>
+    fun getInvitedUsers(id: Long):  MutableSet<InvitedUserResponse>
     fun canViewInvitedUsers(id: Long): Boolean
     fun findUserPhoto(id: Long): File
 }

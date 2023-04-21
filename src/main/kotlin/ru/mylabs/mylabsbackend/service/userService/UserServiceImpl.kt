@@ -85,8 +85,8 @@ class UserServiceImpl(
         return (percent / 100) * labPrice
     }
 
-    override fun getInvitedUsers(id: Long): MutableList<InvitedUserResponse> {
-        val res : MutableList<InvitedUserResponse>  = mutableListOf()
+    override fun getInvitedUsers(id: Long): MutableSet<InvitedUserResponse> {
+        val res : MutableSet<InvitedUserResponse>  = mutableSetOf()
         val user = findById(id)
         user.invitedUsers!!.forEach {
             res.add(InvitedUserResponse(it,it.referralDeductions))

@@ -38,7 +38,7 @@ class User(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    var invitedUsers: MutableList<User>? = null,
+    var invitedUsers: MutableSet<User>? = null,
     @Column(length = 255, nullable = false)
     @setparam:DefaultValue("0f")
     var referralDeductions: Float = 0f
