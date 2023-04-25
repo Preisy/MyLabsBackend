@@ -29,13 +29,18 @@ class UserPhotoServiceImpl(
     }
 
     override fun findUserPhoto(): File {
-        if (!userHavePhoto())
+        if (!userHavePhoto()) {
+            logger.info("User photo not found")
             throw ResourceNotFoundException("Photo")
+        }
 
         val photoId = meService.getMeInfo().photo!!.id
         val filename: String = meService.getMeInfo().photo!!.filename!!
         val filenameBd = userPhotoRepository.findById(photoId)
-            .orElseThrow { ResourceNotFoundException("File") }
+            .orElseThrow {
+                logger.info("File not found")
+                ResourceNotFoundException("File")
+            }
             .filename
 
         if (filenameBd == null) {
@@ -44,10 +49,9 @@ class UserPhotoServiceImpl(
         }
 
         if (filenameBd != filename) {
-//            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
+            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
             throw ResourceNotFoundException("File")
         }
-
         val file = File(uploadsFolderPath.toString(), filename)
         if (!file.exists()) {
             logger.error("${file.absolutePath} not exist while database store it")
@@ -61,6 +65,7 @@ class UserPhotoServiceImpl(
         val filename: String = meService.getMeInfo().photo!!.filename!!
         val file = File(uploadsFolderPath, filename)
         if (!file.exists()) return false
+        logger.info("File: $filename was deleted")
         file.delete()
         return true
     }
@@ -68,10 +73,14 @@ class UserPhotoServiceImpl(
     override fun deletePhoto() {
         val photoId = meService.getMeInfo().photo!!.id
         val userPhoto = userPhotoRepository.findById(photoId)
-            .orElseThrow { ResourceNotFoundException("File") }
+            .orElseThrow {
+                logger.info("File not found")
+                ResourceNotFoundException("File")
+            }
 
 
         if (!userHavePhoto()) {
+            logger.info("File not found")
             throw ResourceNotFoundException("File")
         }
         val user = meService.getMeInfo()
@@ -115,7 +124,7 @@ class UserPhotoServiceImpl(
 
         val newFileName = "${userPhoto.id}.${getFileExtension(file.originalFilename!!)}"
         writeFile(newFileName, file)
-
+        logger.info("Added file: $newFileName")
         userPhoto.filename = newFileName
         return userPhotoRepository.save(userPhoto)
     }

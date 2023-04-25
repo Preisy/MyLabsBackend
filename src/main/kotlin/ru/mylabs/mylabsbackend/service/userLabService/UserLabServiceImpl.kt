@@ -1,6 +1,6 @@
 package ru.mylabs.mylabsbackend.service.userLabService
 
-import org.springframework.data.domain.Sort
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
 import ru.mylabs.mylabsbackend.model.dto.request.UserLabRequest
@@ -14,9 +14,11 @@ class UserLabServiceImpl(
     val userLabRepository: UserLabRepository,
     val meService: MeService
 ) : UserLabService {
+    private val logger = LoggerFactory.getLogger(UserLabServiceImpl::class.java)
     override fun create(userLabRequest: UserLabRequest): UserLab {
         val model = userLabRequest.asModel()
         model.user = meService.getMeInfo()
+        logger.info("Lab: ${model.id} added to user: ${model.user.id}")
         return userLabRepository.save(model)
     }
 
@@ -30,8 +32,14 @@ class UserLabServiceImpl(
 
     override fun findById(id: Long): UserLab {
         val user = meService.getMeInfo()
-        val res = userLabRepository.findById(id).orElseThrow { ResourceNotFoundException("Lab") }
-        if (res.user.id != user.id) throw ResourceNotFoundException("Lab")
+        val res = userLabRepository.findById(id).orElseThrow {
+            logger.info("Lab not found")
+            ResourceNotFoundException("Lab")
+        }
+        if (res.user.id != user.id) {
+            logger.info("Lab not found")
+            throw ResourceNotFoundException("Lab")
+        }
         return res
     }
 
@@ -39,11 +47,16 @@ class UserLabServiceImpl(
         title = userLabRequest.title
         price = userLabRequest.price
         type = userLabRequest.type
+        logger.info("Lab: ${this.id} info updated")
         userLabRepository.save(this)
     }
 
     override fun delete(id: Long) {
-        if (!userLabRepository.existsById(id)) throw ResourceNotFoundException("Lab")
+        if (!userLabRepository.existsById(id)) {
+            logger.info("Lab not found")
+            throw ResourceNotFoundException("Lab")
+        }
+        logger.info("Lab: $id deleted")
         userLabRepository.deleteById(id)
     }
 

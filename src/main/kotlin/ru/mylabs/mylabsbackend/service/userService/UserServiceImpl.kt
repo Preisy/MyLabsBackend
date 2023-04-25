@@ -19,9 +19,7 @@ import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
-import ru.mylabs.mylabsbackend.service.userPhoto.UserPhotoServiceImpl
 import java.io.File
-import kotlin.jvm.optionals.getOrNull
 
 @Service("UserService")
 class UserServiceImpl(
@@ -34,8 +32,11 @@ class UserServiceImpl(
     User::class.simpleName
 ) {
     private val uploadsFolderPath = File("src/main/resources/uploads")
-    private val logger = LoggerFactory.getLogger(UserPhotoServiceImpl::class.java)
-    override fun findById(id: Long): User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
+    private val logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
+    override fun findById(id: Long): User = repository.findById(id).orElseThrow {
+        logger.info("User nor found")
+        ResourceNotFoundException("User")
+    }
 
     override fun create(request: UserRequest): User {
         val model = request.asModel()
@@ -50,26 +51,39 @@ class UserServiceImpl(
     }
 
     override fun giveRole(id: Long, roleRequest: ChangeRoleRequest): User {
-        val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
+        val user: User = repository.findById(id).orElseThrow {
+            logger.info("User nor found")
+            ResourceNotFoundException("User")
+        }
         user.takeIf { !it.containsRole(it, roleRequest) }?.roles?.add(UserRole(roleRequest.name))
         return repository.save(user)
     }
 
     override fun deleteRole(id: Long, roleRequest: ChangeRoleRequest): User {
-        val user: User = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
+        val user: User = repository.findById(id).orElseThrow {
+            logger.info("User nor found")
+            ResourceNotFoundException("User")
+        }
         if (roleRequest.name != UserRoleType.USER)
             user.removeRole(user, roleRequest)
-        else throw BadCredentialsException()
+        else {
+            logger.info("Bad credentials: there is no such role")
+            throw BadCredentialsException()
+        }
         return repository.save(user)
     }
 
     private fun findByEmail(email: String) =
-        repository.findByEmail(email).orElseThrow { ResourceNotFoundException("User") }
+        repository.findByEmail(email).orElseThrow {
+            logger.info("User nor found")
+            ResourceNotFoundException("User")
+        }
 
     override fun update(resetPasswordRequest: ResetPasswordRequest): User {
         resetPasswordRequest.newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword)
         var user = findByEmail(resetPasswordRequest.email)
         user.uPassword = resetPasswordRequest.newPassword
+        logger.info("User: ${user.id} info updated")
         return repository.save(user)
     }
 
@@ -77,6 +91,7 @@ class UserServiceImpl(
     override fun creditPercent(labPrice: Int, user: User): User {
         val percent = propertiesService.getPercent().property.toFloat()
         user.balance += (percent / 100) * labPrice
+        logger.info("referral percent credited to user: ${user.id}")
         return repository.save(user)
     }
 
@@ -86,10 +101,10 @@ class UserServiceImpl(
     }
 
     override fun getInvitedUsers(id: Long): MutableSet<InvitedUserResponse> {
-        val res : MutableSet<InvitedUserResponse>  = mutableSetOf()
+        val res: MutableSet<InvitedUserResponse> = mutableSetOf()
         val user = findById(id)
         user.invitedUsers!!.forEach {
-            res.add(InvitedUserResponse(it,it.referralDeductions))
+            res.add(InvitedUserResponse(it, it.referralDeductions))
         }
         return res
     }
@@ -98,18 +113,25 @@ class UserServiceImpl(
         val user = meService.getMeInfo()
         return user.id == id
     }
+
     fun userHavePhoto(id: Long): Boolean {
         val user = findById(id)
         return user.photo != null
     }
+
     override fun findUserPhoto(id: Long): File {
-        if (!userHavePhoto(id))
+        if (!userHavePhoto(id)) {
+            logger.info("User photo not found")
             throw ResourceNotFoundException("Photo")
+        }
 
         val photoId = findById(id).photo!!.id
-        val filename: String =  findById(id).photo!!.filename!!
+        val filename: String = findById(id).photo!!.filename!!
         val filenameBd = userPhotoRepository.findById(photoId)
-            .orElseThrow { ResourceNotFoundException("File") }
+            .orElseThrow {
+                logger.info("File not found")
+                ResourceNotFoundException("File")
+            }
             .filename
 
         if (filenameBd == null) {
@@ -118,7 +140,7 @@ class UserServiceImpl(
         }
 
         if (filenameBd != filename) {
-//            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
+            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
             throw ResourceNotFoundException("File")
         }
 

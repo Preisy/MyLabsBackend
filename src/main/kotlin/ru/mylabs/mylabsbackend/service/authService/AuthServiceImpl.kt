@@ -1,5 +1,6 @@
 package ru.mylabs.mylabsbackend.service.authService
 
+import org.slf4j.LoggerFactory
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -18,8 +19,8 @@ import ru.mylabs.mylabsbackend.model.repository.EmailConfirmationTokenRepository
 import ru.mylabs.mylabsbackend.model.repository.PasswordConfirmationTokenRepository
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.userService.UserService
-import ru.mylabs.mylabsbackend.utils.validators.EmailValidator
 import ru.mylabs.mylabsbackend.utils.JwtTokenUtil
+import ru.mylabs.mylabsbackend.utils.validators.EmailValidator
 import java.util.*
 import kotlin.random.Random
 
@@ -35,16 +36,27 @@ class AuthServiceImpl(
     private val javaMailSender: JavaMailSender
 
 ) : AuthService {
+    private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
     private fun emailValidation(email: String): Boolean {
         val regexPattern = "^(.+)@(\\S+)$"
         val emailValidator = EmailValidator(regexPattern)
         return emailValidator.patternMatches(email)
     }
+
     override fun signUp(signUpRequest: SignUpRequest): ConfirmMessage {
-        if (!emailValidation(signUpRequest.email)) throw BadCredentialsException()
-        if (userRepository.existsByEmail(signUpRequest.email)) throw EmailAlreadyTakenException()
+        if (!emailValidation(signUpRequest.email)) {
+            logger.info("invalid email")
+            throw BadCredentialsException()
+        }
+        if (userRepository.existsByEmail(signUpRequest.email)) {
+            logger.info("email already taken")
+            throw EmailAlreadyTakenException()
+        }
         signUpRequest.password = passwordEncoder.encode(signUpRequest.password)
-        if (emailConfirmationTokenRepository.existsByEmail(signUpRequest.email)) throw ConfirmationTokenAlreadySent()
+        if (emailConfirmationTokenRepository.existsByEmail(signUpRequest.email)) {
+            logger.info("confirmation token already sent")
+            throw ConfirmationTokenAlreadySent()
+        }
         val emailConfirmationToken = EmailConfirmationToken(
             Random.nextInt(1000, 9999).toString(),
             signUpRequest.name,
@@ -56,8 +68,10 @@ class AuthServiceImpl(
             if (userRepository.existsById(signUpRequest.invitedById!!)) {
                 var userInvitedBy = userService.findById(signUpRequest.invitedById!!)
                 emailConfirmationToken.invitedById = signUpRequest.invitedById
+            } else {
+                logger.info("invalid referral link")
+                throw ConflictException("Invalid referral link")
             }
-            else throw ConflictException("Invalid referral link")
         }
         emailConfirmationTokenRepository.save(emailConfirmationToken)
         val subject = "Complete Registration!"
@@ -69,7 +83,10 @@ class AuthServiceImpl(
     }
 
     override fun confirmSignUp(confirmRequest: SignUpConfirmRequest): TokenResponse {
-        if (!emailValidation(confirmRequest.email)) throw BadCredentialsException()
+        if (!emailValidation(confirmRequest.email)) {
+            logger.info("invalid email")
+            throw BadCredentialsException()
+        }
         val confToken = emailConfirmationTokenRepository.findByEmail(confirmRequest.email)
         if (confToken.confirmationToken == confirmRequest.code) {
             val cal: Calendar = Calendar.getInstance()
@@ -79,19 +96,28 @@ class AuthServiceImpl(
             }
             val token: String = jwtTokenUtil.generateToken(confToken.email)
             var user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
-                user.invitedById = confToken.invitedById
-                var userInvitedBy = userService.findById(user.invitedById!!)
-                userInvitedBy.invitedUsers?.add(user)
+            user.invitedById = confToken.invitedById
+            var userInvitedBy = userService.findById(user.invitedById!!)
+            userInvitedBy.invitedUsers?.add(user)
             userRepository.save(user)
             emailConfirmationTokenRepository.delete(confToken)
             return TokenResponse(token)
-        } else throw ResourceNotFoundException("Confirmation code")
+        } else {
+            logger.info("Confirmation code not found")
+            throw ResourceNotFoundException("Confirmation code")
+        }
     }
 
 
     override fun forgetPassword(request: ForgetPasswordRequest): ConfirmMessage {
-        if (!emailValidation(request.email)) throw BadCredentialsException()
-        if (passwordConfirmationTokenRepository.existsByEmail(request.email)) throw ConfirmationTokenAlreadySent()
+        if (!emailValidation(request.email)) {
+            logger.info("invalid email")
+            throw BadCredentialsException()
+        }
+        if (passwordConfirmationTokenRepository.existsByEmail(request.email)) {
+            logger.info("confirmation token already sent")
+            throw ConfirmationTokenAlreadySent()
+        }
         val passwordConfToken = PasswordConfirmationToken(Random.nextInt(1000, 9999).toString(), request.email)
         passwordConfirmationTokenRepository.save(passwordConfToken)
         val subject = "Reset your password!"
@@ -104,7 +130,10 @@ class AuthServiceImpl(
     }
 
     override fun resetPassword(request: ResetPasswordRequest): TokenResponse {
-        if (!emailValidation(request.email)) throw BadCredentialsException()
+        if (!emailValidation(request.email)) {
+            logger.info("invalid email")
+            throw BadCredentialsException()
+        }
         val confToken = passwordConfirmationTokenRepository.findByEmail(request.email)
         if (confToken.confirmationToken == request.code) {
             val cal: Calendar = Calendar.getInstance()
@@ -116,6 +145,9 @@ class AuthServiceImpl(
             userService.update(request)
             passwordConfirmationTokenRepository.delete(confToken)
             return TokenResponse(token)
-        } else throw ResourceNotFoundException("Confirmation code")
+        } else {
+            logger.info("Confirmation code not found")
+            throw ResourceNotFoundException("Confirmation code")
+        }
     }
 }

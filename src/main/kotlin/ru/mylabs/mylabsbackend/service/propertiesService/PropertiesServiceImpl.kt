@@ -1,5 +1,6 @@
 package ru.mylabs.mylabsbackend.service.propertiesService
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.request.LabsQuantityRequest
 import ru.mylabs.mylabsbackend.model.dto.request.ReferralPercentageRequest
@@ -12,6 +13,7 @@ class PropertiesServiceImpl(
     val labRepository: LabRepository,
     val propertiesRepository: PropertiesRepository
 ) : PropertiesService {
+    private val logger = LoggerFactory.getLogger(PropertiesServiceImpl::class.java)
     private fun findById(id: String, callback: () -> String): Property {
         val res = propertiesRepository.findById(id)
         return if (res.isEmpty) {
@@ -24,6 +26,7 @@ class PropertiesServiceImpl(
     override fun setQuantity(quantity: LabsQuantityRequest): Property {
         var res = getQuantity()
         res.property = quantity.quantity
+        logger.info("lab's examples quantity set to ${quantity.quantity}")
         return propertiesRepository.save(res)
     }
 
@@ -32,6 +35,7 @@ class PropertiesServiceImpl(
     override fun setPercent(newPercent: ReferralPercentageRequest): Property {
         var res = getPercent()
         res.property = newPercent.percent
+        logger.info(" referral percent set to ${newPercent.percent}")
         return propertiesRepository.save(res)
     }
 }

@@ -24,7 +24,10 @@ class TaskFileServiceImpl(
     override fun findAllFilesInOrder(orderId: Long): Iterable<TaskFile> {
         val order = orderRepository
             .findById(orderId)
-            .orElseThrow { ResourceNotFoundException("Order") }
+            .orElseThrow {
+                logger.info("Order not found")
+                ResourceNotFoundException("Order")
+            }
         return order.taskFiles
     }
 
@@ -34,7 +37,10 @@ class TaskFileServiceImpl(
             .toLongOrNull() ?: throw IncorrectFileName()
 
         val filenameBd = taskFileRepository.findById(fileId)
-            .orElseThrow { ResourceNotFoundException("File") }
+            .orElseThrow {
+                logger.info("File not found")
+                ResourceNotFoundException("File")
+            }
             .filename
 
         if (filenameBd == null) {
@@ -43,7 +49,7 @@ class TaskFileServiceImpl(
         }
 
         if (filenameBd != filename) {
-//            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
+            logger.error("filenameBd != filename in uri: $filenameBd != $filename")
             throw ResourceNotFoundException("File")
         }
 
@@ -52,25 +58,29 @@ class TaskFileServiceImpl(
             logger.error("${file.absolutePath} not exist while database store it")
             throw InternalServerErrorException()
         }
-
         return file
     }
 
     override fun deleteFileFromStorage(filename: String): Boolean {
         val file = File(uploadsFolderPath, filename)
         if (!file.exists()) return false
+        logger.info("File: $filename was deleted")
         file.delete()
         return true
     }
 
     override fun deleteFile(orderId: Long, fileId: Long) {
         val taskFile = taskFileRepository.findById(fileId)
-            .orElseThrow { ResourceNotFoundException("File") }
+            .orElseThrow {
+                logger.info("File not found")
+                ResourceNotFoundException("File")
+            }
 
         val isOrderContainsFile = orderRepository.findById(orderId)
             .orElseThrow { ResourceNotFoundException("Order") }
             .taskFiles.contains(taskFile)
         if (!isOrderContainsFile) {
+            logger.info("File not found")
             throw ResourceNotFoundException("File")
         }
 
@@ -101,12 +111,15 @@ class TaskFileServiceImpl(
         if (file.size > 10 * 1024 * 1024) throw FileIsTooBigException()
         uploadsFolderPath.mkdirs()
 
-        val order: Order = orderRepository.findById(orderId).orElseThrow { ResourceNotFoundException("Order") }
+        val order: Order = orderRepository.findById(orderId).orElseThrow {
+            logger.info("Order not found")
+            ResourceNotFoundException("Order")
+        }
         val taskFile = taskFileRepository.save(TaskFile(order))
 
         val newFileName = "${taskFile.id}.${getFileExtension(file.originalFilename!!)}"
         writeFile(newFileName, file)
-
+        logger.info("Added file: $newFileName")
         taskFile.filename = newFileName
         return taskFileRepository.save(taskFile)
     }

@@ -36,7 +36,10 @@ class OrderServiceImpl(
 ) : OrderService {
     private val logger = LoggerFactory.getLogger(TaskFileServiceImpl::class.java)
     private fun findById(id: Long): Order {
-        return orderRepository.findById(id).orElseThrow { ResourceNotFoundException("Order") }
+        return orderRepository.findById(id).orElseThrow {
+            logger.info("Order not found")
+            ResourceNotFoundException("Order")
+        }
     }
 
     private fun findByPromoname(promoName: String) = promocodeRepository.findByPromoName(promoName).orElseThrow {
@@ -52,6 +55,7 @@ class OrderServiceImpl(
         if (model.promo != null) {
             findByPromoname(model.promo!!)
         }
+        logger.info("Order: ${model.id} created by user: ${model.user.id}")
         return orderRepository.save(model)
     }
 
@@ -65,6 +69,7 @@ class OrderServiceImpl(
             }
             taskFileService.deleteFileFromStorage(task.filename!!)
         }
+        logger.info("Order: $id deleted")
         orderRepository.deleteById(id)
     }
 
@@ -106,7 +111,10 @@ class OrderServiceImpl(
     }
 
     override fun setOrderStatus(id: Long, orderStatusRequest: OrderStatusRequest): UserLab {
-        val order = orderRepository.findById(id).orElseThrow{ResourceNotFoundException("Order")}
+        val order = orderRepository.findById(id).orElseThrow {
+            logger.info("Order not found")
+            ResourceNotFoundException("Order")
+        }
         if (orderStatusRequest.status == OrderStatus.Complete) {
             if (orderStatusRequest.metadata == null)
                 throw BadRequestException("Complete order status require Lab info metadata")
@@ -123,8 +131,10 @@ class OrderServiceImpl(
                 model.user.referralDeductions += userService.calculatePercent(model.price)
                 userRepository.save(model.user)
             }
+            logger.info("Order: $id completed")
             return userLabRepository.save(model)
         } else {
+            logger.error("invalid order status")
             throw InternalServerErrorException()
         }
     }
