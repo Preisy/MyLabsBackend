@@ -14,8 +14,9 @@ class LabServiceImpl(
 ) : LabService {
     private val logger = LoggerFactory.getLogger(LabServiceImpl::class.java)
     override fun create(labRequest: LabRequest): Lab {
-        logger.info("Lab created (id: ${labRepository.save(labRequest.asModel()).id})")
-        return labRepository.save(labRequest.asModel())
+        val lab = labRepository.save(labRequest.asModel())
+        logger.info("Lab created (id: ${lab.id})")
+        return lab
     }
 
 

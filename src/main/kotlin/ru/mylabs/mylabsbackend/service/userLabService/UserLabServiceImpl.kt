@@ -18,8 +18,9 @@ class UserLabServiceImpl(
     override fun create(userLabRequest: UserLabRequest): UserLab {
         val model = userLabRequest.asModel()
         model.user = meService.getMeInfo()
-        logger.info("Lab: ${model.id} added to user: ${model.user.id}")
-        return userLabRepository.save(model)
+        val lab = userLabRepository.save(model)
+        logger.info("Lab: ${lab.id} added to user: ${lab.user.id}")
+        return lab
     }
 
     override fun findByUserId(offset: Int?, limit: Int?): Iterable<UserLab> {

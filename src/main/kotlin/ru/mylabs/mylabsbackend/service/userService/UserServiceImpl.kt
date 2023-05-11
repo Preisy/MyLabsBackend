@@ -1,6 +1,7 @@
 package ru.mylabs.mylabsbackend.service.userService
 
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Lazy
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -14,10 +15,12 @@ import ru.mylabs.mylabsbackend.model.dto.response.InvitedUserResponse
 import ru.mylabs.mylabsbackend.model.entity.User
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRole
 import ru.mylabs.mylabsbackend.model.entity.userRoles.UserRoleType
+import ru.mylabs.mylabsbackend.model.repository.OrderRepository
 import ru.mylabs.mylabsbackend.model.repository.UserPhotoRepository
 import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.crudService.CrudServiceImpl
 import ru.mylabs.mylabsbackend.service.meService.MeService
+import ru.mylabs.mylabsbackend.service.orderService.OrderService
 import ru.mylabs.mylabsbackend.service.propertiesService.PropertiesService
 import java.io.File
 
@@ -27,7 +30,10 @@ class UserServiceImpl(
     private val passwordEncoder: BCryptPasswordEncoder,
     private val propertiesService: PropertiesService,
     private val meService: MeService,
-    private val userPhotoRepository: UserPhotoRepository
+    private val userPhotoRepository: UserPhotoRepository,
+    private val orderRepository: OrderRepository,
+    @Lazy
+    private val orderService: OrderService
 ) : UserService, CrudServiceImpl<UserRequest, User, Long, UserRepository>(
     User::class.simpleName
 ) {
@@ -152,5 +158,12 @@ class UserServiceImpl(
 
         return file
     }
-
+      override fun delete(id: Long) {
+          val user = repository.findById(id).orElseThrow { ResourceNotFoundException("User") }
+          val userOrders = orderRepository.findAll()
+          userOrders.forEach {
+              if (it.user==user) orderService.delete(it.id)
+          }
+          repository.deleteById(id)
+      }
 }

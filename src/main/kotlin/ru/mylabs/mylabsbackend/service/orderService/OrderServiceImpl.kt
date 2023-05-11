@@ -2,11 +2,13 @@ package ru.mylabs.mylabsbackend.service.orderService
 
 //import java.io.File
 import org.slf4j.LoggerFactory
+import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import ru.mylabs.mylabsbackend.model.dto.exception.BadRequestException
 import ru.mylabs.mylabsbackend.model.dto.exception.ConflictException
 import ru.mylabs.mylabsbackend.model.dto.exception.InternalServerErrorException
 import ru.mylabs.mylabsbackend.model.dto.exception.ResourceNotFoundException
+import ru.mylabs.mylabsbackend.model.dto.message.emailMesage.NewOrderMailMessage
 import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatus
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
@@ -32,7 +34,8 @@ class OrderServiceImpl(
     private val userService: UserService,
     private val meService: MeService,
     private val promocodeRepository: PromocodeRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val javaMailSender: JavaMailSender
 ) : OrderService {
     private val logger = LoggerFactory.getLogger(TaskFileServiceImpl::class.java)
     private fun findById(id: Long): Order {
@@ -55,9 +58,14 @@ class OrderServiceImpl(
         if (model.promo != null) {
             findByPromoname(model.promo!!)
         }
-        logger.info("Order: ${model.id} created by user: ${model.user.id}")
-        return orderRepository.save(model)
+        val order = orderRepository.save(model)
+        logger.info("Order: ${order.id} created by user: ${order.user.id}")
+        val text = "Order info:\nid: ${order.id}\ndescription: ${order.taskText}\ndeadline: ${order.deadline}"
+        val mailMessage = NewOrderMailMessage(text).asMail()
+        javaMailSender.send(mailMessage)
+        return order
     }
+
 
     override fun delete(id: Long) {
         val order = findById(id)

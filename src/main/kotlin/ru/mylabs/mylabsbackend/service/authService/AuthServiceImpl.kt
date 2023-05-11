@@ -87,22 +87,28 @@ class AuthServiceImpl(
             logger.info("invalid email")
             throw BadCredentialsException()
         }
-        val confToken = emailConfirmationTokenRepository.findByEmail(confirmRequest.email)
-        if (confToken.confirmationToken == confirmRequest.code) {
-            val cal: Calendar = Calendar.getInstance()
-            if ((confToken.expiryDate.time - cal.time.time) <= 0) {
+        if (emailConfirmationTokenRepository.existsByEmail(confirmRequest.email)) {
+            val confToken = emailConfirmationTokenRepository.findByEmail(confirmRequest.email)
+            if (confToken.confirmationToken == confirmRequest.code) {
+                val cal: Calendar = Calendar.getInstance()
+                if ((confToken.expiryDate.time - cal.time.time) <= 0) {
+                    emailConfirmationTokenRepository.delete(confToken)
+                    throw TokenExpiredException()
+                }
+                val token: String = jwtTokenUtil.generateToken(confToken.email)
+                var user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
+                user.invitedById = confToken.invitedById
+                var userInvitedBy = userService.findById(user.invitedById!!)
+                userInvitedBy.invitedUsers?.add(user)
+                userRepository.save(user)
                 emailConfirmationTokenRepository.delete(confToken)
-                throw TokenExpiredException()
+                return TokenResponse(token)
+            } else {
+                logger.info("Confirmation code not found")
+                throw ResourceNotFoundException("Confirmation code")
             }
-            val token: String = jwtTokenUtil.generateToken(confToken.email)
-            var user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
-            user.invitedById = confToken.invitedById
-            var userInvitedBy = userService.findById(user.invitedById!!)
-            userInvitedBy.invitedUsers?.add(user)
-            userRepository.save(user)
-            emailConfirmationTokenRepository.delete(confToken)
-            return TokenResponse(token)
-        } else {
+        }
+        else {
             logger.info("Confirmation code not found")
             throw ResourceNotFoundException("Confirmation code")
         }
@@ -134,18 +140,25 @@ class AuthServiceImpl(
             logger.info("invalid email")
             throw BadCredentialsException()
         }
-        val confToken = passwordConfirmationTokenRepository.findByEmail(request.email)
-        if (confToken.confirmationToken == request.code) {
-            val cal: Calendar = Calendar.getInstance()
-            if ((confToken.expiryDate.time - cal.time.time) <= 0) {
+        if (passwordConfirmationTokenRepository.existsByEmail(request.email)) {
+
+            val confToken = passwordConfirmationTokenRepository.findByEmail(request.email)
+            if (confToken.confirmationToken == request.code) {
+                val cal: Calendar = Calendar.getInstance()
+                if ((confToken.expiryDate.time - cal.time.time) <= 0) {
+                    passwordConfirmationTokenRepository.delete(confToken)
+                    throw TokenExpiredException()
+                }
+                val token: String = jwtTokenUtil.generateToken(confToken.email)
+                userService.update(request)
                 passwordConfirmationTokenRepository.delete(confToken)
-                throw TokenExpiredException()
+                return TokenResponse(token)
+            } else {
+                logger.info("Confirmation code not found")
+                throw ResourceNotFoundException("Confirmation code")
             }
-            val token: String = jwtTokenUtil.generateToken(confToken.email)
-            userService.update(request)
-            passwordConfirmationTokenRepository.delete(confToken)
-            return TokenResponse(token)
-        } else {
+        }
+        else {
             logger.info("Confirmation code not found")
             throw ResourceNotFoundException("Confirmation code")
         }
