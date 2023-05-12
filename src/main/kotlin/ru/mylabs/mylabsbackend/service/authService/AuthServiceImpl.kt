@@ -91,15 +91,18 @@ class AuthServiceImpl(
             val confToken = emailConfirmationTokenRepository.findByEmail(confirmRequest.email)
             if (confToken.confirmationToken == confirmRequest.code) {
                 val cal: Calendar = Calendar.getInstance()
-                if ((confToken.expiryDate.time - cal.time.time) <= 0) {
+               if ((confToken.expiryDate.time - cal.time.time) <= 0) {
                     emailConfirmationTokenRepository.delete(confToken)
                     throw TokenExpiredException()
-                }
+               }
                 val token: String = jwtTokenUtil.generateToken(confToken.email)
                 var user = User(confToken.uname, confToken.email, confToken.uPassword, confToken.contact)
                 user.invitedById = confToken.invitedById
-                var userInvitedBy = userService.findById(user.invitedById!!)
-                userInvitedBy.invitedUsers?.add(user)
+                if (user.invitedById!=null)
+                {
+                    var userInvitedBy = userService.findById(user.invitedById!!)
+                    userInvitedBy.invitedUsers?.add(user)
+                }
                 userRepository.save(user)
                 emailConfirmationTokenRepository.delete(confToken)
                 return TokenResponse(token)
