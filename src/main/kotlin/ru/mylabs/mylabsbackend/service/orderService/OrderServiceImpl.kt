@@ -147,10 +147,9 @@ class OrderServiceImpl(
         }
     }
 
-    override fun findByUserId(offset: Int?, limit: Int?): Iterable<Order> {
+    override fun findByUserId(id: Long, offset: Int?, limit: Int?): Iterable<Order> {
         if (orderRepository.count() <= (offset ?: 0) + (limit ?: 0)) return emptyList()
-        val user = meService.getMeInfo()
-        var res = orderRepository.findByUserId(user.id).drop(offset ?: 0)
+        var res = orderRepository.findByUserId(id).drop(offset ?: 0)
         if (limit != null) res = res.dropLast(res.size - limit)
         return res
     }

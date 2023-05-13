@@ -8,11 +8,13 @@ import ru.mylabs.mylabsbackend.model.dto.request.OrderRequest
 import ru.mylabs.mylabsbackend.model.dto.request.OrderStatusRequest
 import ru.mylabs.mylabsbackend.model.dto.response.ApiResponse
 import ru.mylabs.mylabsbackend.model.entity.Order
+import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.orderService.OrderService
 
 @RestController
 class OrderController(
-    private val orderService: OrderService
+    private val orderService: OrderService,
+    private val meService: MeService
 ) {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/orders")
@@ -51,10 +53,20 @@ class OrderController(
         return DeletedMessage().asResponse()
     }
     @GetMapping("/users/orders")
-    fun findByUserId(
+    fun findByAuthId(
         @RequestParam offset: Int?,
         @RequestParam limit: Int?,
     ): Iterable<Order> {
-        return orderService.findByUserId(offset, limit)
+        val user = meService.getMeInfo()
+        return orderService.findByUserId(user.id, offset, limit)
+    }
+    @GetMapping("/users/{id}/orders")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun findByUserId(
+        @PathVariable id: Long,
+        @RequestParam offset: Int?,
+        @RequestParam limit: Int?,
+    ): Iterable<Order> {
+        return orderService.findByUserId(id, offset, limit)
     }
 }

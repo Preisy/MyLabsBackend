@@ -13,5 +13,5 @@ interface OrderService {
     fun update(id: Long, orderRequest: OrderRequest): Order
     fun patch(id: Long, orderRequest: OrderRequest): Order
     fun setOrderStatus(id: Long, orderStatusRequest: OrderStatusRequest): UserLab
-    fun findByUserId(offset: Int? = null, limit: Int? = null): Iterable<Order>
+    fun findByUserId(id: Long, offset: Int? = null, limit: Int? = null): Iterable<Order>
 }
