@@ -52,7 +52,7 @@ class OrderController(
         orderService.delete(id)
         return DeletedMessage().asResponse()
     }
-    @GetMapping("/users/orders")
+    @GetMapping("/me/orders")
     fun findByAuthId(
         @RequestParam offset: Int?,
         @RequestParam limit: Int?,
