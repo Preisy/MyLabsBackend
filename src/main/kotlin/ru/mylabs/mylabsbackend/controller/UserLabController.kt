@@ -11,20 +11,20 @@ import ru.mylabs.mylabsbackend.model.entity.labs.UserLab
 import ru.mylabs.mylabsbackend.service.userLabService.UserLabService
 
 @RestController
-@RequestMapping("/users/labs")
 class UserLabController {
     @Autowired
     private lateinit var userLabService: UserLabService
 
-    @GetMapping
+    @GetMapping("/users/{id}/labs")
     fun findAll(
+        @PathVariable id: Long,
         @RequestParam offset: Int?,
         @RequestParam limit: Int?,
     ): Iterable<UserLab> {
-        return userLabService.findByUserId(offset, limit)
+        return userLabService.findByUserId(id, offset, limit)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/users/labs/{id}")
     fun findById(@PathVariable id: Long): UserLab {
         return userLabService.findById(id)
     }
@@ -35,12 +35,12 @@ class UserLabController {
         return userLabService.create(userLabRequest)
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/users/labs/{id}")
     fun update(@PathVariable id: Long, @RequestBody userLabRequest: UserLabRequest): UserLab {
         return userLabService.update(id, userLabRequest)
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/users/labs/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<ApiResponse> {
         userLabService.delete(id)
         return DeletedMessage().asResponse()

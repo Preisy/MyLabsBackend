@@ -21,6 +21,7 @@ import ru.mylabs.mylabsbackend.model.repository.UserRepository
 import ru.mylabs.mylabsbackend.service.meService.MeService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileService
 import ru.mylabs.mylabsbackend.service.taskFileService.TaskFileServiceImpl
+import ru.mylabs.mylabsbackend.service.userLabService.UserLabService
 import ru.mylabs.mylabsbackend.service.userService.UserService
 import ru.mylabs.mylabsbackend.utils.validators.dateValidator.DateValidator
 import ru.mylabs.mylabsbackend.utils.validators.dateValidator.DateValidatorImpl
@@ -35,7 +36,8 @@ class OrderServiceImpl(
     private val meService: MeService,
     private val promocodeRepository: PromocodeRepository,
     private val userRepository: UserRepository,
-    private val javaMailSender: JavaMailSender
+    private val javaMailSender: JavaMailSender,
+    private val userLabService: UserLabService
 ) : OrderService {
     private val logger = LoggerFactory.getLogger(TaskFileServiceImpl::class.java)
     private fun findById(id: Long): Order {
@@ -56,7 +58,22 @@ class OrderServiceImpl(
         if (!validator.isValid(model.deadline)) throw BadRequestException()
         model.promo = orderRequest.promoName
         if (model.promo != null) {
-            findByPromoname(model.promo!!)
+            val promo = findByPromoname(model.promo!!)
+            if (promo.promoName == "СТАРТ") {
+                val user = meService.getMeInfo()
+                val orders = orderRepository.findAll()
+                orders.forEach {
+                    if (it.user.id == user.id) {
+                        throw ConflictException("This promocode can be used only for your first order")
+                    }
+                }
+                val userLabs = userLabService.findByUserId(user.id)
+                userLabs.forEach {
+                    if (it.user.id == user.id) {
+                        throw ConflictException("This promocode can be used only for your first order")
+                    }
+                }
+            }
         }
         val order = orderRepository.save(model)
         logger.info("Order: ${order.id} created by user: ${order.user.id}")
