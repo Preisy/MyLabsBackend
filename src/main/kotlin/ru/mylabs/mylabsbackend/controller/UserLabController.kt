@@ -15,13 +15,12 @@ class UserLabController {
     @Autowired
     private lateinit var userLabService: UserLabService
 
-    @GetMapping("/users/{id}/labs")
+    @GetMapping("/users/labs")
     fun findAll(
-        @PathVariable id: Long,
         @RequestParam offset: Int?,
         @RequestParam limit: Int?,
     ): Iterable<UserLab> {
-        return userLabService.findByUserId(id, offset, limit)
+        return userLabService.findByAuthentication(offset, limit)
     }
 
     @GetMapping("/users/labs/{id}")
